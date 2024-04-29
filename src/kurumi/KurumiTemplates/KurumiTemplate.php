@@ -2,6 +2,8 @@
 
 namespace Kurumi\KurumiTemplates;
 
+use Exception;
+
 /**
  *
  *
@@ -18,30 +20,40 @@ class KurumiTemplate {
      *  
      *  menyimpan nama layout yang akan digunakan.
      *
-     *  @property string $layout 
+     *  @property array $content 
      *
      **/
-    protected string $layout;
+    protected static array $content;
 
     /**
      *
      *  menyimpan file buffer.
      *
-     *  @property string $buffer 
+     *  @property array $buffer 
      *
      **/
-    protected string $buffer;
+    protected static array $buffer = [];
+
+    /**
+     *
+     *  menyimpan key.
+     *
+     *  @property array $buffer 
+     *
+     **/
+    protected static string $key; 
 
     /**
      *
      *  @method layoutName()
      *
      **/
-    public function layoutName(string $name): void
+    public function content(string $name): void
     {
-        if ($this->layout === $name)
-        {
-            echo $this->buffer;
+        if (array_key_exists($name, self::$content)) {
+            if (self::$content[$name] === $name) {
+                echo self::$buffer[$name];
+            }
         }
     }
 
@@ -52,7 +64,9 @@ class KurumiTemplate {
      **/
     public function startContent(string $name)
     {
-        $this->layout = $name;
+        self::$content[$name] = $name;
+        self::$key = $name;
+
         return ob_start();
     }
 
@@ -63,7 +77,7 @@ class KurumiTemplate {
      **/
     public function stopContent(): void
     {
-        $this->buffer = ob_get_clean();
+        self::$buffer[self::$key] = ob_get_clean();
     }
 
     /**
@@ -73,6 +87,10 @@ class KurumiTemplate {
      **/
     public function extendContent(string $path): void
     {
-        include_once PATH_VIEWS . $path . '.kurumi.php';
+        try {
+            view($path);
+        } catch (Exception) {
+            throw new Exception("Kurumi: Tampaknya file ($path) tidak dapat ditemukan. Seperti hatiku yang kehilangan iramanya :)");
+        }
     }
 }

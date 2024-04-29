@@ -21,14 +21,14 @@ function view(string $path, array $data = [])
 
     $template = new KurumiTemplate();
     
-    try {
+    #try {
         if (file_exists($pathFiles . '.kurumi.php')) {
             include_once $pathFiles . '.kurumi.php';
         } else {
             include_once $pathFiles . '.php';
         }
-    }  catch (Exception) {
-        throw new Error(ERROR_FILENAME);
-    }
+    #}  catch (Exception) {
+        #throw new Error(ERROR_FILENAME);
+    #}
 
 }
