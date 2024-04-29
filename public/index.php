@@ -1,17 +1,11 @@
 <?php
 
-use Whoops\Handler\PrettyPageHandler;
-
+// Registari composer autoload... 
 require_once __DIR__ . '/../vendor/autoload.php';
-require_once __DIR__ . '/../src/kurumi/utils/init.php';
 
+// Kurumi Bootstrap 
+require_once __DIR__ . '/../src/kurumi/bootstrap.php';
 
-$whoops = new \Whoops\Run;
-$handler = new PrettyPageHandler();
-
-$whoops->pushHandler($handler);
-$whoops->register();
-
-
-
+// Memanggil router 
 require_once __DIR__ . '/../routes/web.php';
+

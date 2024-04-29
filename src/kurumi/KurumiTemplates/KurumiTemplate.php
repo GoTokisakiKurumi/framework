@@ -2,7 +2,6 @@
 
 namespace Kurumi\KurumiTemplates;
 
-use Exception;
 
 /**
  *
@@ -88,9 +87,9 @@ class KurumiTemplate {
     public function extendContent(string $path): void
     {
         try {
-            view($path);
-        } catch (Exception) {
-            throw new Exception("Kurumi: Tampaknya file ($path) tidak dapat ditemukan. Seperti hatiku yang kehilangan iramanya :)");
+            include_once PATH_VIEWS . $path . '.kurumi.php';
+        } catch (\Exception) {
+            throw new \Exception("Kurumi: Tampaknya file ($path) tidak dapat ditemukan. Seperti hatiku yang kehilangan iramanya :)");
         }
     }
 }

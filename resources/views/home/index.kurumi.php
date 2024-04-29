@@ -1,13 +1,13 @@
 <?php $template->startContent('title'); ?>
 
-waduh
+kurumi | home
 
 <?php $template->stopContent(); ?>
 
 
 <?php $template->startContent('layouts'); ?>
 
-<h1>Hello World! {{ $nama }}</h1>
+<h1>Hello World! <?= $nama ?></h1>
 
 <?php $template->stopContent(); ?>
 

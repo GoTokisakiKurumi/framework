@@ -2,7 +2,7 @@
     "name": "u0_a1069/kurumi",
     "autoload": {
         "psr-4": {
-            "Kurumi\\": "src/",
+            "Kurumi\\": "src/kurumi/",
             "Kurumi\\Routes\\": "src/kurumi/Routes/",
             "Kurumi\\KurumiTemplates\\": "src/kurumi/KurumiTemplates/"
         }
