@@ -12,6 +12,14 @@ namespace Kurumi\Utils;
  **/
 class View
 {
+
+    /**
+     * 
+     *  Default file extension.
+     *
+     **/
+    const DEFAULT_FILE_EXTENSION = '.kurumi.php';
+
     /**
      *
      *  @property string $basePath 
@@ -49,14 +57,18 @@ class View
     {
         global $container;
 
-        $viewPath = $this->basePath . $view . '.kurumi.php';
-        $template = $container->make('KurumiTemplate');
+        $viewPath = $this->basePath . 'app/' . $view  . '.php';
+        $pathSourceViews = PATH_VIEWS . $view . self::DEFAULT_FILE_EXTENSION;
 
-        if (file_exists($viewPath)) {
+        if (file_exists($pathSourceViews)) {
+            $template = $container->make('KurumiTemplate');
+            $tranfrom = $container->make('KurumiTransform');
+            $tranfrom->render($view);
             extract($data);
+
             include_once $viewPath;
         } else {
-            throw new \Exception('View file not found: ' . $view);
+            throw new \Exception("Kurumi: Tampaknya file ($view) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
         }
     }
 }

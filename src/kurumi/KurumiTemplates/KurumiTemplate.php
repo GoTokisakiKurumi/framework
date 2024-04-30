@@ -16,6 +16,24 @@ namespace Kurumi\KurumiTemplates;
 class KurumiTemplate {
 
     /**
+     * 
+     *  Default file extension.
+     *
+     **/
+    const DEFAULT_FILE_EXTENSION = '.kurumi.php';
+
+    
+    /**
+     *  
+     *  @property $transform 
+     *
+     *  Menyimpan object dari class KurumiTransform.
+     *
+     **/
+    protected KurumiTransformInterface $transform;
+        
+   
+    /**
      *  
      *  menyimpan nama layout yang akan digunakan.
      *
@@ -31,20 +49,38 @@ class KurumiTemplate {
      *  @property array $buffer 
      *
      **/
-    protected static array $buffer = [];
+    protected static array $buffer;
 
     /**
      *
      *  menyimpan key.
      *
-     *  @property array $buffer 
+     *  @property array $key 
      *
      **/
     protected static string $key; 
 
+
     /**
      *
-     *  @method layoutName()
+     *  @method __construct()
+     *
+     *  inisialisasi property.
+     *
+     **/
+    public function __construct(KurumiTransformInterface $transform)
+    {
+        $this->transform = $transform;
+        self::$content = [];
+        self::$buffer = [];
+        self::$key = ""; 
+    }
+    
+
+
+    /**
+     *
+     *  @method content()
      *
      **/
     public function content(string $name): void
@@ -87,9 +123,10 @@ class KurumiTemplate {
     public function extendContent(string $path): void
     {
         try {
-            include_once PATH_VIEWS . $path . '.kurumi.php';
+            $this->transform->render($path);
+            include PATH_STORAGE . 'app/' . $path . '.php';
         } catch (\Exception) {
-            throw new \Exception("Kurumi: Tampaknya file ($path) tidak dapat ditemukan. Seperti hatiku yang kehilangan iramanya :)");
+            throw new \Exception("Kurumi: Tampaknya file ($path) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
         }
     }
 }

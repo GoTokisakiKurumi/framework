@@ -1,21 +1,19 @@
-<?php $template->startContent('title'); ?>
+@kurumiSection('title')
 
-kurumi | home
+home
 
-<?php $template->stopContent(); ?>
+@endKurumiSection
 
-
-<?php $template->startContent('layouts'); ?>
+@kurumiSection('layouts')
 
 <h1>Hello World! <?= $nama ?></h1>
 
-<?php $template->stopContent(); ?>
+@endKurumiSection
 
-<?php $template->startContent('footer'); ?>
+@kurumiSection('footer')
 
 @copyright lutfi aulia sidik
 
-<?php $template->stopContent(); ?>
+@endKurumiSection
 
-
-<?php $template->extendContent('layout/main'); ?>
+@kurumiExtends('layout/main')
