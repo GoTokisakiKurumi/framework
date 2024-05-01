@@ -26,8 +26,8 @@ $whoops->register();
  **/
 $container = new Container();
 
-$container->bind('View', function() {
-    return new View(PATH_STORAGE);
+$container->bind('View', function($container) {
+    return new View($container, PATH_STORAGE);
 });
 $container->bind('KurumiTransform', function() { 
     return new KurumiTransform(PATH_VIEWS);

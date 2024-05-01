@@ -7,6 +7,8 @@ home
 @kurumiSection('layouts')
 
 <h1>Hello World! <?= $nama ?></h1>
+{{ $nama }}
+{! $nama !}
 
 @endKurumiSection
 

@@ -13,5 +13,7 @@
             "email": "biolutfi@gmail.com"
         }
     ],
-    "require": {}
+    "require": {
+        "filp/whoops": "^2.15"
+    }
 }

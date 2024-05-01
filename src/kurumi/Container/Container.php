@@ -9,7 +9,7 @@ namespace Kurumi\Container;
  *  @author Lutfi Aulia Sidik 
  *
  **/
-class Container
+class Container implements ContainerInterface
 {
     /**
      *  
@@ -23,7 +23,7 @@ class Container
      *  Binding class kedalam container
      *
      **/
-    public function bind(string $abstract, $concrete)
+    public function bind(string $abstract, $concrete): void
     {
         $this->bindings[$abstract] = $concrete;
     }
@@ -33,7 +33,7 @@ class Container
      * Membuat instance class dari container
      *
      **/
-    public function make(string $abstract)
+    public function make(string $abstract): mixed
     {
         if (isset($this->bindings[$abstract])) {
             $concrete = $this->bindings[$abstract];
