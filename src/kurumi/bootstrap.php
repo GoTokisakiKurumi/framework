@@ -8,7 +8,6 @@ use Kurumi\Container\Container;
 use Kurumi\Utils\View;
 use Kurumi\KurumiTemplates\KurumiTemplate;
 use Kurumi\KurumiTemplates\KurumiTransform;
-use Kurumi\KurumiTemplates\KurumiTransformInterface;
 
 /**
  *
@@ -27,13 +26,14 @@ $whoops->register();
  **/
 $container = new Container();
 
-$container->bind('View', fn () => new View(PATH_STORAGE));
+$container->bind('View', function() {
+    return new View(PATH_STORAGE);
+});
+$container->bind('KurumiTransform', function() { 
+    return new KurumiTransform(PATH_VIEWS);
+});
 $container->bind('KurumiTemplate', function($container) {
     return new KurumiTemplate($container->make('KurumiTransform'));
-});
-$container->bind('KurumiTransform', fn () => new KurumiTransform(PATH_VIEWS));
-$container->bind(KurumiTransformInterface::class, function() {
-    return new KurumiTransform(PATH_VIEWS);
 });
 
 return $container;
