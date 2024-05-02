@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurumi\Utils;
+namespace Kurumi;
 
 use Kurumi\Container\ContainerInterface;
 
@@ -50,6 +50,31 @@ class View
         $this->basePath = $basePath;
     }
 
+
+    /**
+     *  
+     *  handler views 
+     *  
+     *  @param string $view 
+     *  @return object 
+     **/
+    protected function handlerViews(string $view): object
+    {
+        $pathSourceViews = PATH_VIEWS . $view . self::DEFAULT_FILE_EXTENSION;
+        if (file_exists($pathSourceViews)) {
+            $template  = $this->container->make('KurumiTemplate');
+            $directive = $this->container->make('KurumiDirective');
+            $directive->render($view);
+            
+          return $template;
+        } elseif (file_exists(str_replace('.kurumi.php', '.php', $pathSourceViews))) {
+            throw new \Exception("($view.php) Sepertinya kamu melupakan namaku?");
+        } else {
+            throw new \Exception("Tampaknya file ($view) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
+        }
+
+    }
+
     /**
      *
      *
@@ -61,18 +86,13 @@ class View
     public function render(string $view, array $data = [])
     {
 
-        $viewPath = $this->basePath . 'app/' . pathToDot($view)  . '.php';
-        $pathSourceViews = PATH_VIEWS . $view . self::DEFAULT_FILE_EXTENSION;
+        $viewPathStorage = $this->basePath . 'app/' . pathToDot($view)  . '.php';
+        $template = $this->handlerViews($view);
 
-        if (file_exists($pathSourceViews)) {
-            $template = $this->container->make('KurumiTemplate');
-            $tranfrom = $this->container->make('KurumiDirective');
-            $tranfrom->render($view);
+        if (is_object($template)) {
             extract($data);
-
-            include_once $viewPath;
-        } else {
-            throw new \Exception("Kurumi: Tampaknya file ($view) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
+            include_once $viewPathStorage;
         }
+        
     }
 }
