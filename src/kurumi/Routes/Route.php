@@ -26,7 +26,7 @@ class Route implements RouteInterfaces {
      *  @return void 
      * 
      **/
-    public static function get(string $path, callable $handler): void
+    public static function get(string $path, callable | array $handler): void
     {
         self::addHandler('GET', $path, $handler);
     }
