@@ -124,7 +124,7 @@ class KurumiTemplate {
     {
         try {
             $this->directive->render($path);
-            include PATH_STORAGE . 'app/' . $path . '.php';
+            include PATH_STORAGE . 'app/' . pathToDot($path) . '.php';
         } catch (\Exception) {
             throw new \Exception("Kurumi: Tampaknya file ($path) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
         }

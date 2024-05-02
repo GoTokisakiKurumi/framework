@@ -61,7 +61,7 @@ class View
     public function render(string $view, array $data = [])
     {
 
-        $viewPath = $this->basePath . 'app/' . $view  . '.php';
+        $viewPath = $this->basePath . 'app/' . pathToDot($view)  . '.php';
         $pathSourceViews = PATH_VIEWS . $view . self::DEFAULT_FILE_EXTENSION;
 
         if (file_exists($pathSourceViews)) {

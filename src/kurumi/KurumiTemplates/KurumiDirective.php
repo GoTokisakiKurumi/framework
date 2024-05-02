@@ -141,12 +141,11 @@ class KurumiDirective implements KurumiDirectiveInterface {
         $templateContent = $this->loadTemplate($path);
         $resultContent   = $this->processedDirectives($templateContent);
 
-        $destinationDirectory = dirname(self::DEFAULT_FOLDER_GENERATE . $path);
+        $destinationDirectory = self::DEFAULT_FOLDER_GENERATE;
         if (!file_exists($destinationDirectory)) {
             mkdir($destinationDirectory, 0777 , true);
-        }            
+        }
 
-        file_put_contents(self::DEFAULT_FOLDER_GENERATE . $path . '.php', $resultContent);
-            
+        file_put_contents(self::DEFAULT_FOLDER_GENERATE . pathToDot($path) . '.php', $resultContent);
     }
 }
