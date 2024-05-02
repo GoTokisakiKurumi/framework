@@ -30,7 +30,7 @@ class KurumiTemplate {
      *  Menyimpan object dari class KurumiTransform.
      *
      **/
-    protected KurumiTransformInterface $transform;
+    protected KurumiDirectiveInterface $directive;
         
    
     /**
@@ -68,9 +68,9 @@ class KurumiTemplate {
      *  inisialisasi property.
      *
      **/
-    public function __construct(KurumiTransformInterface $transform)
+    public function __construct(KurumiDirectiveInterface $directive)
     {
-        $this->transform = $transform;
+        $this->directive = $directive;
         self::$content = [];
         self::$buffer = [];
         self::$key = ""; 
@@ -123,7 +123,7 @@ class KurumiTemplate {
     public function extendContent(string $path): void
     {
         try {
-            $this->transform->render($path);
+            $this->directive->render($path);
             include PATH_STORAGE . 'app/' . $path . '.php';
         } catch (\Exception) {
             throw new \Exception("Kurumi: Tampaknya file ($path) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");

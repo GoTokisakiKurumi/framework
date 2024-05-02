@@ -7,7 +7,7 @@ require_once __DIR__ . '/../../src/kurumi/Utils/func/init.php';
 use Kurumi\Container\Container;
 use Kurumi\Utils\View;
 use Kurumi\KurumiTemplates\KurumiTemplate;
-use Kurumi\KurumiTemplates\KurumiTransform;
+use Kurumi\KurumiTemplates\KurumiDirective;
 
 /**
  *
@@ -29,11 +29,11 @@ $container = new Container();
 $container->bind('View', function($container) {
     return new View($container, PATH_STORAGE);
 });
-$container->bind('KurumiTransform', function() { 
-    return new KurumiTransform(PATH_VIEWS);
+$container->bind('KurumiDirective', function() { 
+    return new KurumiDirective(PATH_VIEWS);
 });
 $container->bind('KurumiTemplate', function($container) {
-    return new KurumiTemplate($container->make('KurumiTransform'));
+    return new KurumiTemplate($container->make('KurumiDirective'));
 });
 
 return $container;

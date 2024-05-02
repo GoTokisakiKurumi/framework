@@ -9,7 +9,7 @@ namespace Kurumi\KurumiTemplates;
  *  @author Lutfi Aulia Sidik
  *
  **/
-interface KurumiTransformInterface {
+interface KurumiDirectiveInterface {
 
     /**
      *

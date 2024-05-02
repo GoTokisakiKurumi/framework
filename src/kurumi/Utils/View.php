@@ -66,7 +66,7 @@ class View
 
         if (file_exists($pathSourceViews)) {
             $template = $this->container->make('KurumiTemplate');
-            $tranfrom = $this->container->make('KurumiTransform');
+            $tranfrom = $this->container->make('KurumiDirective');
             $tranfrom->render($view);
             extract($data);
 
