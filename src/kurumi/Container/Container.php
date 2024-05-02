@@ -13,6 +13,8 @@ class Container implements ContainerInterface
 {
     /**
      *  
+     *  Menyimpan class yang dibindings 
+     *
      *  @property array $bindings 
      *
      **/
@@ -22,6 +24,9 @@ class Container implements ContainerInterface
      *
      *  Binding class kedalam container
      *
+     *  @param string $abstract 
+     *  @param mixed $concrete 
+     *  @return void 
      **/
     public function bind(string $abstract, $concrete): void
     {
@@ -30,8 +35,10 @@ class Container implements ContainerInterface
 
     /** 
      *
-     * Membuat instance class dari container
-     *
+     *  Membuat instance class dari container
+     *  
+     *  @param string $abstract 
+     *  @return mixed 
      **/
     public function make(string $abstract): mixed
     {
