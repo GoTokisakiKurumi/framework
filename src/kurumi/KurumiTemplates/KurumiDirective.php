@@ -95,17 +95,18 @@ class KurumiDirective implements KurumiDirectiveInterface {
     /**
      *  
      *  Tambahkan default directive 
-     *  
+     *  $this->addDirective('/@endkurumisection/', '<?php $template->stopContent() ?>');
      *  @return void 
      **/
     private function addDefaultDirectives(): void
     {
+
         $this->addDirective('/{{\s*(.*?)\s*}}/', '<?php echo htmlspecialchars($1) ?>');
         $this->addDirective('/{!\s*(.*?)\s*!}/', '<?php echo $1 ?>');
         $this->addDirective('/@kurumiphp\s*(.*?)\s*@endkurumiphp/s', '<?php $1 ?>');
         $this->addDirective('/@kurumiExtends\s*\((.*)\)\s*/', '<?php $template->extendContent($1) ?>');
-        $this->addDirective('/@kurumiSection\s*\((.*)\)\s*/', '<?php $template->startContent($1) ?>');
-        $this->addDirective('/@endkurumisection/', '<?php $template->stopContent() ?>');
+        $this->addDirective('/@kurumiSection\s*\((.*?)\)(.*?)\s*@endkurumisection/s', '<?php $template->startContent($1) ?>$2<?php $template->stopContent(); ?>');
+
         $this->addDirective('/@kurumiContent\s*\((.*)\)\s*/', '<?php $this->content($1) ?>');
         #$this->addDirective('/^\s*[\r\n]+/m', '');
         #$this->addDirective('/[\r\n]+/', '');
