@@ -68,7 +68,7 @@ class KurumiDirective implements KurumiDirectiveInterface {
      *  @return string 
      *  @throws \Exception jika file template tidak ada 
      **/
-    public function loadTemplate(string $path): string
+    private function loadTemplate(string $path): string
     {
         $templatePath = $this->basePath . $path . self::DEFAULT_FILE_EXTENSION;
         if(!file_exists($templatePath)) {
@@ -98,14 +98,14 @@ class KurumiDirective implements KurumiDirectiveInterface {
      *  
      *  @return void 
      **/
-    protected function addDefaultDirectives(): void
+    private function addDefaultDirectives(): void
     {
         $this->addDirective('/{{\s*(.*?)\s*}}/', '<?php echo htmlspecialchars($1) ?>');
         $this->addDirective('/{!\s*(.*?)\s*!}/', '<?php echo $1 ?>');
-        $this->addDirective('/{\s*(.*?)\s*}/', '<?php $1 ?>');
+        $this->addDirective('/@kurumiphp\s*(.*?)\s*@endkurumiphp/s', '<?php $1 ?>');
         $this->addDirective('/@kurumiExtends\s*\((.*)\)\s*/', '<?php $template->extendContent($1) ?>');
         $this->addDirective('/@kurumiSection\s*\((.*)\)\s*/', '<?php $template->startContent($1) ?>');
-        $this->addDirective('/@endKurumiSection/', '<?php $template->stopContent() ?>');
+        $this->addDirective('/@endkurumisection/', '<?php $template->stopContent() ?>');
         $this->addDirective('/@kurumiContent\s*\((.*)\)\s*/', '<?php $this->content($1) ?>');
         #$this->addDirective('/^\s*[\r\n]+/m', '');
         #$this->addDirective('/[\r\n]+/', '');
@@ -119,7 +119,7 @@ class KurumiDirective implements KurumiDirectiveInterface {
      *  @param string $content 
      *  @return string 
      **/
-    protected function processedDirectives(string $content): string
+    private function processesDirectives(string $content): string
     {
         foreach ($this->directive as $pattern => $replacement) {
             $content = preg_replace($pattern, $replacement, $content);
@@ -139,7 +139,7 @@ class KurumiDirective implements KurumiDirectiveInterface {
     public function render(string $path): void
     {
         $templateContent = $this->loadTemplate($path);
-        $resultContent   = $this->processedDirectives($templateContent);
+        $resultContent   = $this->processesDirectives($templateContent);
 
         $destinationDirectory = self::DEFAULT_FOLDER_GENERATE;
         if (!file_exists($destinationDirectory)) {
