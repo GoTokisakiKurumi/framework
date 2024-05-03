@@ -8,9 +8,6 @@
     </head>
     <body>
         @kurumiContent('layouts')
-        <footer>
-            @kurumiContent('footer')
-        </footer>
     </body>
  <html> 
 
