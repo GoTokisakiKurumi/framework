@@ -2,7 +2,6 @@
 
 namespace Kurumi\KurumiTemplates;
 
-
 /**
  *
  *
@@ -28,7 +27,6 @@ class KurumiTemplate {
      *  @property $transform 
      *
      *  Menyimpan object dari class KurumiTransform.
-     *
      **/
     protected KurumiDirectiveInterface $directive;
         
@@ -37,88 +35,99 @@ class KurumiTemplate {
      *  
      *  menyimpan nama layout yang akan digunakan.
      *
-     *  @property array $content 
-     *
+     *  @property array $nameContents 
      **/
-    protected static array $content;
+    protected static array $nameContents = [];
+
 
     /**
      *
-     *  menyimpan file buffer.
+     *  menyimpan isi content.
      *
      *  @property array $buffer 
-     *
      **/
-    protected static array $buffer;
+    protected static array $contents = [];
+
 
     /**
      *
      *  menyimpan key.
      *
      *  @property array $key 
-     *
      **/
-    protected static string $key; 
+    protected static string $key = ""; 
 
 
     /**
      *
-     *  @method __construct()
+     *   @method __construct()
      *
-     *  inisialisasi property.
-     *
+     *  Inisialisasi property DI.
      **/
     public function __construct(KurumiDirectiveInterface $directive)
     {
         $this->directive = $directive;
-        self::$content = [];
-        self::$buffer = [];
-        self::$key = ""; 
     }
     
 
 
     /**
+     *  
+     *  Menghandle contents dan menampilkan contents
+     *  yang sesuai dengan $name 
      *
-     *  @method content()
-     *
+     *  @param string $name 
+     *  @return void 
      **/
     public function content(string $name): void
     {
-        if (array_key_exists($name, self::$content)) {
-            if (self::$content[$name] === $name) {
-                echo self::$buffer[$name];
-            }
+        if (array_key_exists($name, self::$nameContents)) {
+            if (self::$nameContents[$name] === $name) {
+                echo self::$contents[$name];
+            } 
         }
     }
 
     /**
      *  
-     *  @methods startContent() 
-     *
+     *  
+     *  Memulai content yang akan ditampilkan.
+     *  
+     *  @param string $name 
+     *  @param string $value opsional 
+     *  @return string 
      **/
-    public function startContent(string $name)
+    public function startContent(string $name, string $value = ''): string
     {
-        self::$content[$name] = $name;
+        self::$nameContents[$name] = $name;
         self::$key = $name;
+
+        if (!is_null($value)) {
+            self::$contents[$name] = $value;
+        }
 
         return ob_start();
     }
 
     /**
      *
-     *  @method stopContent()
-     *  
+     *  Menyimpan Content dan sebagai pembatas content
+     *  yang disimpan.
+     *
+     *  @return void  
      **/
     public function stopContent(): void
     {
-        self::$buffer[self::$key] = ob_get_clean();
+        self::$contents[self::$key] = ob_get_clean();
     }
 
     /**
      *
-     *  @method extendContent()
+     *  Memanggil file yang akan menjadi layout/parent.
      *
+     *  @param string $path 
+     *  @return void 
+     *  @throws jika file tidak ditemukan.
      **/
     public function extendContent(string $path): void
     {
