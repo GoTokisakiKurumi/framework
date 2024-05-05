@@ -1,5 +1,4 @@
 app/Controllers/*
 resources/views/*
-routes/*
 vendor
 storage
