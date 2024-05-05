@@ -1,12 +1,9 @@
-@kurumiphp
-
-$template->startContent('title')
-
-@endkurumiphp
+@kurumiSection('title', 'home')
 
 @kurumiSection('layouts')
 
 <h1>{{ $nama }}</h1>
 
 @endkurumisection
+
 @kurumiExtends('layout/main')
