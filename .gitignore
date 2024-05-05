@@ -1,2 +1,4 @@
+app/Controllers/*
+resources/views/*
 vendor
 storage
