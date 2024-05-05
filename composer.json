@@ -3,9 +3,7 @@
     "autoload": {
         "psr-4": {
             "App\\Controllers\\": "app/Controllers/",
-            "Kurumi\\": "src/kurumi/",
-            "Kurumi\\Routes\\": "src/kurumi/Routes/",
-            "Kurumi\\KurumiTemplates\\": "src/kurumi/KurumiTemplates/"
+            "Kurumi\\": "src/kurumi/"
         }
     },
     "authors": [
