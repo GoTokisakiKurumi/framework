@@ -2,6 +2,8 @@
 
 namespace Kurumi\KurumiTemplates;
 
+use Exception;
+
 /**
  *
  *
@@ -119,6 +121,20 @@ class KurumiTemplate {
     public function stopContent(): void
     {
         self::$contents[self::$key] = ob_get_clean();
+    }
+
+    /**
+     * 
+     *
+     **/
+    public function includeFile(string $path)
+    {
+        $pathInclude = PATH_VIEWS . $path . self::DEFAULT_FILE_EXTENSION;
+
+        if (!file_exists($pathInclude)) {
+            throw new Exception("($path) File tidak ditemukan.");
+        }
+        
     }
 
     /**
