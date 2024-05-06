@@ -76,7 +76,7 @@ class KurumiTemplate {
     /**
      *  
      *  Menghandle contents dan menampilkan contents
-     *  yang sesuai dengan $name 
+     *  yang sesuai dengan param $name 
      *
      *  @param string $name 
      *  @return void 
@@ -89,6 +89,8 @@ class KurumiTemplate {
             } 
         }
     }
+
+
 
     /**
      *  
@@ -111,6 +113,8 @@ class KurumiTemplate {
         return ob_start();
     }
 
+
+
     /**
      *
      *  Menyimpan Content dan sebagai pembatas content
@@ -123,20 +127,22 @@ class KurumiTemplate {
         self::$contents[self::$key] = ob_get_clean();
     }
 
-    /**
-     * 
-     *
-     **/
-    public function includeFile(string $path)
-    {
-        $pathInclude = PATH_VIEWS . $path . self::DEFAULT_FILE_EXTENSION;
 
-        if (!file_exists($pathInclude)) {
-            throw new Exception("($path) File tidak ditemukan.");
-        }
-        
+
+    /**
+     *  
+     *  Include files.
+     *
+     *  @param string $path 
+     *  @return void 
+     **/
+    public function includeFile(string $path, array $data = []): void
+    {
+        $this->renderDirective($path, $data);
     }
 
+
+    
     /**
      *
      *  Memanggil file yang akan menjadi layout/parent.
@@ -147,11 +153,29 @@ class KurumiTemplate {
      **/
     public function extendContent(string $path): void
     {
-        try {
-            $this->directive->render($path);
-            include PATH_STORAGE . 'app/' . pathToDot($path) . '.php';
-        } catch (\Exception) {
+        $this->renderDirective($path);
+    }
+
+
+
+    /**
+     *  
+     *  Generate file syntax directive menjadi file 
+     *  file syntax php biasa. 
+     *
+     *  file directive ->  (.*).kurumi.php 
+     *  
+     *  @param string $path 
+     **/
+    public function renderDirective(string $path, array $data = []): void
+    {
+        $pathFileDirective = PATH_VIEWS . $path . self::DEFAULT_FILE_EXTENSION;
+        if (!file_exists($pathFileDirective)) {
             throw new \Exception("Kurumi: Tampaknya file ($path) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
         }
+
+        extract($data); // > 0 or 1
+        $this->directive->render($path); // > null
+        include_once PATH_STORAGE . 'app/' . pathToDot($path) . '.php'; 
     }
 }

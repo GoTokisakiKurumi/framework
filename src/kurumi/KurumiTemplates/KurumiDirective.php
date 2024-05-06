@@ -108,6 +108,7 @@ class KurumiDirective implements KurumiDirectiveInterface {
         $this->addDirective('/@kurumiSection\s*\((.*)\)\s*/', '<?php $template->startContent($1) ?>');
         $this->addDirective('/@kurumiContent\s*\((.*)\)\s*/', '<?php $this->content($1) ?>');
         $this->addDirective('/^\s*[\r\n]+/m', '');
+        $this->addDirective('/@kurumiInclude\s*\((.*)\)\s*/', '<?php $template->includeFile($1) ?>');
         #$this->addDirective('/[\r\n]+/', '');
     }
 
