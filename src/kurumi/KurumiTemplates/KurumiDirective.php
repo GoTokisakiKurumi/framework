@@ -23,7 +23,7 @@ class KurumiDirective implements KurumiDirectiveInterface {
      *
      *  Default path folder generate
      **/
-    const DEFAULT_FOLDER_GENERATE = PATH_STORAGE . 'app/';
+    const DEFAULT_FOLDER_GENERATE = PATH_STORAGE_APP;
 
 
     /**
@@ -41,7 +41,8 @@ class KurumiDirective implements KurumiDirectiveInterface {
      *
      *  @property array $directive
      **/
-    protected array $directive;
+    protected array $directive = [];
+
 
 
     /**
@@ -55,14 +56,15 @@ class KurumiDirective implements KurumiDirectiveInterface {
     public function __construct(string $basePath)
     {
         $this->basePath = $basePath;
-        $this->directive = [];
         $this->addDefaultDirectives();
     }
 
 
+
     /**
      *  
-     *  Load Template.
+     *  Handler load file yang akan digenerate.
+     *  dan kembalikan hasilnya.
      *  
      *  @param string $path
      *  @return string 
@@ -79,9 +81,10 @@ class KurumiDirective implements KurumiDirectiveInterface {
     }
 
 
+
     /**
      * 
-     *  Menambahkan directive.
+     *  Menambahkan directive baru.
      *
      *  @param string $pattern
      *  @param string $replacement
@@ -92,6 +95,24 @@ class KurumiDirective implements KurumiDirectiveInterface {
         $this->directive[$pattern] = $replacement;
     }
 
+
+ 
+    /**
+     * 
+     *  Menambahkan directive baru dengan array.
+     *
+     *  @param array $directives
+     *  @return void
+     **/
+    public function addDirectiveAll(array $directives): void
+    {
+        if(!is_null($directives) and sizeof($directives) > 0) {
+            foreach($directives as $pattern => $replacement) {
+                $this->directive[$pattern] = $replacement;
+            }
+        }
+    }
+
     /**
      *  
      *  Tambahkan default directive 
@@ -100,22 +121,26 @@ class KurumiDirective implements KurumiDirectiveInterface {
     private function addDefaultDirectives(): void
     {
 
-        $this->addDirective('/{{\s*(.*?)\s*}}/', '<?php echo htmlspecialchars($1) ?>');
-        $this->addDirective('/{!\s*(.*?)\s*!}/', '<?php echo $1 ?>');
-        $this->addDirective('/@kurumiphp\s*(.*?)\s*@endkurumiphp/s', '<?php $1 ?>');
-        $this->addDirective('/@kurumiExtends\s*\((.*)\)\s*/', '<?php $template->extendContent($1) ?>');
-        $this->addDirective('/@kurumiSection\s*\((.*?)\)(.*?)\s*@endkurumisection/s', '<?php $template->startContent($1) ?>$2<?php $template->stopContent(); ?>');
-        $this->addDirective('/@kurumiSection\s*\((.*)\)\s*/', '<?php $template->startContent($1) ?>');
-        $this->addDirective('/@kurumiContent\s*\((.*)\)\s*/', '<?php $this->content($1) ?>');
-        $this->addDirective('/^\s*[\r\n]+/m', '');
-        $this->addDirective('/@kurumiInclude\s*\((.*)\)\s*/', '<?php $template->includeFile($1) ?>');
-        #$this->addDirective('/[\r\n]+/', '');
+        $this->addDirectiveAll([
+            '/{{\s*(.*?)\s*}}/' =>'<?php echo htmlspecialchars($1) ?>',
+            '/{!\s*(.*?)\s*!}/' =>'<?php echo $1 ?>',
+            '/@kurumiphp\s*(.*?)\s*@endkurumiphp/s' => '<?php $1 ?>',
+            '/@kurumiExtends\s*\((.*)\)\s*/' => '<?php $template->extendContent($1) ?>',
+            '/@kurumiSection\s*\((.*?)\)(.*?)\s*@endkurumisection/s' => '<?php $template->startContent($1) ?>$2<?php $template->stopContent(); ?>',
+            '/@kurumiSection\s*\((.*)\)\s*/' =>'<?php $template->startContent($1) ?>',
+            '/@kurumiContent\s*\((.*)\)\s*/' => '<?php $this->content($1) ?>',
+            '/@kurumiInclude\s*\((.*)\)\s*/' =>'<?php $template->includeFile($1) ?>',
+            '/^\s*[\r\n]+/m' => '',
+            //'/[\r\n]+/' => ''
+        ]);
     }
+
 
 
     /**
      * 
-     *  Memproses directive.
+     *  Mengubah syntax directive menjadi syntax php biasa,
+     *  dan kembalikan hasilnya.
      * 
      *  @param string $content 
      *  @return string 
@@ -130,9 +155,11 @@ class KurumiDirective implements KurumiDirectiveInterface {
     }
 
 
+
     /**
      * 
-     *  Render file.
+     *  Render, Generate file baru dengan hasil
+     *  convert directive.
      *
      *  @param string $path 
      *  @return void 
