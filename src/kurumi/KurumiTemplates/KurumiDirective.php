@@ -113,6 +113,8 @@ class KurumiDirective implements KurumiDirectiveInterface {
         }
     }
 
+
+
     /**
      *  
      *  Tambahkan default directive 
