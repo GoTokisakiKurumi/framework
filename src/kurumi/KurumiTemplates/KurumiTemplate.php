@@ -160,6 +160,87 @@ class KurumiTemplate {
 
     /**
      *  
+     *  Memungkinkan untuk menulis file css atau js 
+     *  secara terpisah dan dicompile/generate
+     *  menjadi satu file.
+     *   
+     *  @param string $view 
+     *  @param string $path 
+     *  @return void 
+     **/
+    public function importFile(string $view, string $path, string $key = null): void
+    {
+            
+        $relativeFolder = explode('/', $view)[0];
+        $pathSourceFile = PATH_VIEWS . $relativeFolder . '/' . $path;
+        $key = $key ?? $relativeFolder;
+        $fileExtension  = explode('.', $path)[1];
+
+        $this->handlerImportFile(
+            $pathSourceFile,
+            $key,
+            $fileExtension,
+            PATH_PUBLIC
+        );  
+    }
+
+
+
+    /**
+     *
+     *  @method importFile()
+     *
+     *  @param string $path 
+     *  @param string $key 
+     *  @param string $fileExtension 
+     *  @param string $generateTo
+     *  @return void 
+     *
+     **/
+    private function handlerImportFile(string $path, string $key, string $fileExtension, string $generateTo)
+    {
+
+        $startKey = "/\/\*\*\[\b$key\b\]\*\*\//";
+        $endKey = "/\/\*\*\[\bend$key\b\]\*\*\//";
+
+        $destinationDirectory = $generateTo . $fileExtension . '/';
+        $pathGenerateFile = $destinationDirectory . 'app.' . $fileExtension;
+
+        if (!file_exists($path)) return throw new \Exception("($path) file tidak ditemukan.");
+        if (!file_exists($destinationDirectory)) mkdir($destinationDirectory, 0777, true);
+        if (!file_exists($pathGenerateFile)) file_put_contents($pathGenerateFile, '');
+
+        $getSourceContentFile   = file_get_contents($path);
+        $getGenarateContentFile = file_get_contents($pathGenerateFile);
+
+        preg_match_all($startKey, $getGenarateContentFile, $startMatches, PREG_OFFSET_CAPTURE);
+        preg_match_all($endKey, $getGenarateContentFile, $endMatches, PREG_OFFSET_CAPTURE);
+
+        if (empty($startMatches[0]) || empty($endMatches[0])) {
+            return file_put_contents(
+                $pathGenerateFile, 
+                "/**[$key]**/\n\n{$getSourceContentFile}\n/**[end$key]**/\n\n",
+                FILE_APPEND
+            );                
+        }
+
+        $startOffsets = array_column($startMatches[0], 1);
+        $endOffsets   = array_column($endMatches[0], 1);
+
+        foreach ($startOffsets as $index => $startOffset) {               
+            $endOffset = $endOffsets[$index];      
+            $beforeSection  = substr($getGenarateContentFile, 0, $startOffset + strlen($startMatches[0][$index][0]));
+            $afterSection   = substr($getGenarateContentFile, $endOffset);
+            $newContentFile = $beforeSection . "\n\n$getSourceContentFile\n" . $afterSection;
+        }
+
+        file_put_contents($pathGenerateFile, $newContentFile);
+    }   
+    
+
+
+    /**
+     *  
      *  Generate file syntax directive menjadi file 
      *  file syntax php biasa. 
      *
