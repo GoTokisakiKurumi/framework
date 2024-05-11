@@ -3,7 +3,7 @@
 // Memanggil utils function...
 require_once __DIR__ . '/../../src/kurumi/Utils/func/init.php';
 
-
+use Kurumi\Consoles\Command;
 use Kurumi\Container\Container;
 use Kurumi\View;
 use Kurumi\KurumiTemplates\KurumiTemplate;
@@ -34,6 +34,9 @@ $container->bind('KurumiDirective', function() {
 });
 $container->bind('KurumiTemplate', function($container) {
     return new KurumiTemplate($container->make('KurumiDirective'));
+});
+$container->bind('Command', function() {
+    return new Command();
 });
 
 return $container;

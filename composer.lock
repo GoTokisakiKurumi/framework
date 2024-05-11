@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "08f900f0f8ae044b40b4438c75374dfd",
+    "content-hash": "de67cef082dde1f8f06275a558b06047",
     "packages": [
         {
             "name": "filp/whoops",
@@ -126,6 +126,58 @@
                 "source": "https://github.com/php-fig/log/tree/3.0.0"
             },
             "time": "2021-07-14T16:46:02+00:00"
+        },
+        {
+            "name": "samejack/php-argv",
+            "version": "1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/samejack/php-argv.git",
+                "reference": "0551f0f7fd38a5e9dcb316d5cc9028cdd62b21ac"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/samejack/php-argv/zipball/0551f0f7fd38a5e9dcb316d5cc9028cdd62b21ac",
+                "reference": "0551f0f7fd38a5e9dcb316d5cc9028cdd62b21ac",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "*@stable",
+                "phpunit/phpunit": "~4.8|~5.7",
+                "squizlabs/php_codesniffer": "*@stable"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "samejack\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "SJ",
+                    "email": "sj@toright.com",
+                    "homepage": "http://blog.toright.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "PHP CLI arguments parse.",
+            "homepage": "https://github.com/samejack/php-argv",
+            "keywords": [
+                "cli",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/samejack/php-argv/issues",
+                "source": "https://github.com/samejack/php-argv/tree/1.0.3"
+            },
+            "time": "2020-07-15T12:28:03+00:00"
         }
     ],
     "packages-dev": [],

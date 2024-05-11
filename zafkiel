@@ -1,0 +1,21 @@
+#!/usr/bin/env php
+<?php
+
+/**
+ *
+ *  
+ *  @author Lutfi Aulia Sidik 
+ **/
+use samejack\PHP\ArgvParser;
+
+
+// Registari composer autoload... 
+require_once __DIR__ . '/vendor/autoload.php';
+
+// Kurumi Bootstrap 
+require_once __DIR__ . '/src/kurumi/bootstrap.php';
+
+// Call command...
+$argvParser = new ArgvParser();
+$container->make('Command')->handleCommand($argvParser->parseConfigs());
+
