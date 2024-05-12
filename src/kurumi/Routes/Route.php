@@ -2,7 +2,11 @@
 
 namespace Kurumi\Routes;
 
+
+
 use Kurumi\Routes\RouteInterfaces;
+
+
 
 /**
  *
@@ -13,12 +17,15 @@ use Kurumi\Routes\RouteInterfaces;
  **/
 class Route implements RouteInterfaces {
 
+
     /**
      *
      *  @property array $handler 
      *
     **/
     private static array $handler = [];
+
+
 
     /**
      *
@@ -31,6 +38,8 @@ class Route implements RouteInterfaces {
         self::addHandler('GET', $path, $handler);
     }
 
+
+
     /**
      *
      *  @method route post() 
@@ -41,6 +50,8 @@ class Route implements RouteInterfaces {
     {
         self::addHandler('POST', $path, $handler);
     }
+
+
 
     /**
      *
@@ -57,6 +68,8 @@ class Route implements RouteInterfaces {
         ];
     }
 
+
+    
     /**
      *
      *  @method route run() 

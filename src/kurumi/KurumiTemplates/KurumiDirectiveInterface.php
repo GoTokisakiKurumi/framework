@@ -11,6 +11,8 @@ namespace Kurumi\KurumiTemplates;
  **/
 interface KurumiDirectiveInterface {
 
+
+
     /**
      *
      *  @method render()

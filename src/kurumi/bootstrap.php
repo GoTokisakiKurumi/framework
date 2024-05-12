@@ -27,7 +27,11 @@ $whoops->register();
 $container = new Container();
 
 $container->bind('View', function($container) {
-    return new View($container, PATH_STORAGE);
+    return new View(
+        $container->make('KurumiTemplate'), 
+        $container->make('KurumiDirective'),
+        PATH_STORAGE
+    );
 });
 $container->bind('KurumiDirective', function() { 
     return new KurumiDirective(PATH_VIEWS);

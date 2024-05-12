@@ -2,7 +2,13 @@
 
 namespace Kurumi;
 
-use Kurumi\Container\ContainerInterface;
+use Exception;
+use Kurumi\KurumiTemplates\
+{ 
+    KurumiDirectiveInterface,
+    KurumiTemplateInterface
+};
+
 
 /**
  *
@@ -20,13 +26,20 @@ class View
      **/
     const DEFAULT_FILE_EXTENSION = '.kurumi.php';
 
+
     /**
-     *
-     *  @property ContainerInterface $container 
-     *
-     *  menyimpan objek container.
+     *  
+     *  Menyimpan class instance KurumiTemplate
      **/
-    protected ContainerInterface $container;
+    protected KurumiTemplateInterface $kurumiTemplate;
+
+
+    /**
+     *  
+     *  Menyimpan class instance KurumiDirective 
+     **/
+    protected KurumiDirectiveInterface $kurumiDirective;
+
 
     /**
      *
@@ -36,6 +49,8 @@ class View
      **/
     protected readonly string $basePath;
 
+
+
     /**
      *
      *
@@ -44,11 +59,16 @@ class View
      *  @param string $basePath 
      *  @param ContainerInterface $container
      **/
-    public function __construct(ContainerInterface $container, string $basePath)
+    public function __construct(
+        KurumiTemplateInterface  $kurumiTemplate,
+        KurumiDirectiveInterface $kurumiDirective,
+        string $basePath)
     {
-        $this->container = $container;
+        $this->kurumiDirective = $kurumiDirective;
+        $this->kurumiTemplate  = $kurumiTemplate;
         $this->basePath = $basePath;
     }
+
 
 
     /**
@@ -62,18 +82,20 @@ class View
     {
         $pathSourceViews = PATH_VIEWS . $view . self::DEFAULT_FILE_EXTENSION;
         if (file_exists($pathSourceViews)) {
-            $template  = $this->container->make('KurumiTemplate');
-            $directive = $this->container->make('KurumiDirective');
+            $template  = $this->kurumiTemplate;
+            $directive = $this->kurumiDirective;
             $directive->render($view);
             
           return $template;
         } elseif (file_exists(str_replace('.kurumi.php', '.php', $pathSourceViews))) {
-            throw new \Exception("($view.php) Sepertinya kamu melupakan namaku?");
+            throw new Exception("($view.php) Sepertinya kamu melupakan namaku?");
         } else {
-            throw new \Exception("Tampaknya file ($view) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
+            throw new Exception("Tampaknya file ($view) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
         }
 
     }
+
+
 
     /**
      *
@@ -85,7 +107,6 @@ class View
      **/
     public function render(string $view, array $data = [])
     {
-
         $viewPathStorage = $this->basePath . 'app/' . pathToDot($view)  . '.php';
         $template = $this->handlerViews($view);
 

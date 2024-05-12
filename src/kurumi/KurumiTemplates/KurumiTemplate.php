@@ -14,7 +14,7 @@ use Exception;
  *  @author Lutfi Aulia Sidik 
  *
  **/
-class KurumiTemplate {
+class KurumiTemplate implements KurumiTemplateInterface {
 
     /**
      * 
@@ -206,7 +206,7 @@ class KurumiTemplate {
         $destinationDirectory = $generateTo . $fileExtension . '/';
         $pathGenerateFile = $destinationDirectory . 'app.' . $fileExtension;
 
-        if (!file_exists($path)) return throw new \Exception("($path) file tidak ditemukan.");
+        if (!file_exists($path)) return throw new Exception("($path) file tidak ditemukan.");
         if (!file_exists($destinationDirectory)) mkdir($destinationDirectory, 0777, true);
         if (!file_exists($pathGenerateFile)) file_put_contents($pathGenerateFile, '');
 
@@ -252,7 +252,7 @@ class KurumiTemplate {
     {
         $pathFileDirective = PATH_VIEWS . $path . self::DEFAULT_FILE_EXTENSION;
         if (!file_exists($pathFileDirective)) {
-            throw new \Exception("Kurumi: Tampaknya file ($path) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
+            throw new  Exception("Kurumi: Tampaknya file ($path) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
         }
 
         extract($data); // > 0 or 1
