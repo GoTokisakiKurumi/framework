@@ -126,6 +126,7 @@ class KurumiDirective implements KurumiDirectiveInterface {
         $this->addDirectiveAll([
             '/{{\s*(.*?)\s*}}/' =>'<?php echo htmlspecialchars($1) ?>',
             '/{!\s*(.*?)\s*!}/' =>'<?php echo $1 ?>',
+            '/@kurumiforeach\s*\((.*?)\)(.*?)\s*@endkurumiforeach/s' => '<?php foreach($1): ?>$2<?php endforeach; ?>',
             '/@kurumiphp\s*(.*?)\s*@endkurumiphp/s' => '<?php $1 ?>',
             '/@kurumiExtends\s*\((.*)\)\s*/' => '<?php $template->extendContent($1) ?>',
             '/@kurumiSection\s*\((.*?)\)(.*?)\s*@endkurumisection/s' => '<?php $template->startContent($1) ?>$2<?php $template->stopContent(); ?>',
