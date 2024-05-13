@@ -1,6 +1,7 @@
 app/Controllers/*
 public/css/*
 public/js/*
+public/images/*
 resources/views/*
 resources/css/*
 vendor

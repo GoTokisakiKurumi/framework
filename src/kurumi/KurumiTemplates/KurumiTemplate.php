@@ -250,13 +250,7 @@ class KurumiTemplate implements KurumiTemplateInterface {
      **/
     public function renderDirective(string $path, array $data = []): void
     {
-        $pathFileDirective = PATH_VIEWS . $path . self::DEFAULT_FILE_EXTENSION;
-        if (!file_exists($pathFileDirective)) {
-            throw new  Exception("Kurumi: Tampaknya file ($path) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
-        }
-
-        extract($data); // > 0 or 1
-        $this->directive->render($path); // > null
-        include_once PATH_STORAGE . 'app/' . pathToDot($path) . '.php'; 
+        global $container;
+        $container->make('View')->render($path, $data);
     }
 }

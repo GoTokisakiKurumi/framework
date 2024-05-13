@@ -130,7 +130,7 @@ class KurumiDirective implements KurumiDirectiveInterface {
             '/@kurumiExtends\s*\((.*)\)\s*/' => '<?php $template->extendContent($1) ?>',
             '/@kurumiSection\s*\((.*?)\)(.*?)\s*@endkurumisection/s' => '<?php $template->startContent($1) ?>$2<?php $template->stopContent(); ?>',
             '/@kurumiSection\s*\((.*)\)\s*/' =>'<?php $template->startContent($1) ?>',
-            '/@kurumiContent\s*\((.*)\)\s*/' => '<?php $this->content($1) ?>',
+            '/@kurumiContent\s*\((.*)\)\s*/' => '<?php $template->content($1) ?>',
             '/@kurumiInclude\s*\((.*)\)\s*/' =>'<?php $template->includeFile($1) ?>',
             '/@kurumiImport\s*\((.*)\)\s*/' =>'<?php $template->importFile($view, $1) ?>',
             '/^\s*[\r\n]+/m' => '',
