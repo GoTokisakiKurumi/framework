@@ -1,9 +1,9 @@
 <?php
 
-namespace Kurumi;
+namespace Kurumi\Views;
 
 use Exception;
-use Kurumi\KurumiTemplates\
+use Kurumi\KurumiEngines\
 { 
     KurumiDirectiveInterface,
     KurumiTemplateInterface

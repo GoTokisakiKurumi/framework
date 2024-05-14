@@ -1,6 +1,6 @@
 <?php
 
-namespace Kurumi\KurumiTemplates;
+namespace Kurumi\KurumiEngines;
 
 
 

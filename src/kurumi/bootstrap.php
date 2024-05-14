@@ -5,9 +5,9 @@ require_once __DIR__ . '/../../src/kurumi/Utils/func/init.php';
 
 use Kurumi\Consoles\Command;
 use Kurumi\Container\Container;
-use Kurumi\View;
-use Kurumi\KurumiTemplates\KurumiTemplate;
-use Kurumi\KurumiTemplates\KurumiDirective;
+use Kurumi\Views\View;
+use Kurumi\KurumiEngines\KurumiTemplate;
+use Kurumi\KurumiEngines\KurumiDirective;
 
 /**
  *
