@@ -1,5 +1,7 @@
 <?php
 
+use Kurumi\Views\View;
+
 /**
  *
  *  @param string $path
@@ -11,5 +13,5 @@
 function view(string $path, array $data = [])
 {
     global $container;
-    $container->make("View")->render($path, $data);
+    $container->make(View::class)->render($path, $data);
 }

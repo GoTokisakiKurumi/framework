@@ -3,6 +3,7 @@
 namespace Kurumi\KurumiEngines;
 
 use Exception;
+use Kurumi\Views\View;
 
 /**
  *
@@ -251,6 +252,6 @@ class KurumiTemplate implements KurumiTemplateInterface {
     public function renderDirective(string $path, array $data = []): void
     {
         global $container;
-        $container->make('View')->render($path, $data);
+        $container->make(View::class)->render($path, $data);
     }
 }

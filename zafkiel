@@ -6,6 +6,8 @@
  *  
  *  @author Lutfi Aulia Sidik 
  **/
+
+use Kurumi\Consoles\Command;
 use samejack\PHP\ArgvParser;
 
 
@@ -17,5 +19,5 @@ require_once __DIR__ . '/src/kurumi/bootstrap.php';
 
 // Call command...
 $argvParser = new ArgvParser();
-$container->make('Command')->handleCommand($argvParser->parseConfigs());
+$container->make(Command::class)->handleCommand($argvParser->parseConfigs());
 

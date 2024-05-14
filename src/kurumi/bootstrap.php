@@ -26,20 +26,27 @@ $whoops->register();
  **/
 $container = new Container();
 
-$container->bind('View', function($container) {
+// Bind class View 
+$container->bind(View::class, function($container) {
     return new View(
-        $container->make('KurumiTemplate'), 
-        $container->make('KurumiDirective'),
+        $container->make(KurumiTemplate::class), 
+        $container->make(KurumiDirective::class),
         PATH_STORAGE
     );
 });
-$container->bind('KurumiDirective', function() { 
+
+// Bind class KurumiDirective 
+$container->bind(KurumiDirective::class, function() { 
     return new KurumiDirective(PATH_VIEWS);
 });
-$container->bind('KurumiTemplate', function($container) {
-    return new KurumiTemplate($container->make('KurumiDirective'));
+
+// Bind class KurumiTemplate
+$container->bind(KurumiTemplate::class, function($container) {
+    return new KurumiTemplate($container->make(KurumiDirective::class));
 });
-$container->bind('Command', function() {
+
+// Bind class Command 
+$container->bind(Command::class, function() {
     return new Command();
 });
 
