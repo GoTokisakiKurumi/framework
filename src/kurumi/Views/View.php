@@ -78,21 +78,16 @@ class View
      *  @param string $view 
      *  @return object 
      **/
-    protected function handlerViews(string $view): object
+    protected function handlerViews(string $view): bool
     {
         $pathSourceViews = PATH_VIEWS . $view . self::DEFAULT_FILE_EXTENSION;
-        if (file_exists($pathSourceViews)) {
-            $template  = $this->kurumiTemplate;
-            $directive = $this->kurumiDirective;
-            $directive->render($view);
-            
-          return $template;
-        } elseif (file_exists(str_replace('.kurumi.php', '.php', $pathSourceViews))) {
+        if (file_exists(str_replace('.kurumi.php', '.php', $pathSourceViews))) {
             throw new Exception("($view.php) Sepertinya kamu melupakan namaku?");
-        } else {
+        } elseif (!file_exists($pathSourceViews)) {
             throw new Exception("Tampaknya file ($view) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
         }
 
+        return true;
     }
 
 
@@ -105,13 +100,17 @@ class View
      *  @param string $view 
      *  @param array $data
      **/
-    public function render(string $view, array $data = [])
+    public function render(string $view, array $data = []): void
     {
         $viewPathStorage = $this->basePath . 'app/' . pathToDot($view)  . '.php';
-        $template = $this->handlerViews($view);
-
-        if (is_object($template)) {
+        $isFileExist = $this->handlerViews($view);
+        
+        if ($isFileExist) {
+            $template  = $this->kurumiTemplate;
+            $directive = $this->kurumiDirective;
+            $directive->render($view);
             extract($data);
+
             include_once $viewPathStorage;
         }
         
