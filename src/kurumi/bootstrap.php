@@ -39,7 +39,7 @@ $container->bind(View::class, function($container) {
 
 // Bind class KurumiDirective 
 $container->bind(KurumiDirective::class, function() { 
-    return new KurumiDirective(PATH_VIEWS);
+    return new KurumiDirective(PATH_VIEWS, PATH_STORAGE_PUBLIC);
 });
 
 // Bind class KurumiTemplate

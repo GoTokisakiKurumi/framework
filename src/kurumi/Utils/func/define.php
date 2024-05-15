@@ -10,3 +10,4 @@ define('PATH_RESOURCES', '../resources/');
 define('PATH_VIEWS', '../resources/views/');
 define('PATH_STORAGE', '../storage/');
 define('PATH_STORAGE_APP', '../storage/app/');
+define('PATH_STORAGE_PUBLIC', '../storage/app/public/');

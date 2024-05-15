@@ -20,19 +20,21 @@ class KurumiDirective implements KurumiDirectiveInterface {
 
 
     /**
+     * 
+     *  @property string $pathOutput 
      *
-     *  Default path folder generate
+     *  Menyimpan path input.
      **/
-    const DEFAULT_FOLDER_GENERATE = PATH_STORAGE_APP;
+    protected readonly string $pathInput;
 
 
     /**
      * 
-     *  @property string $basePath 
+     *  @property string $pathOutput 
      *
-     *  Menyimpan base path.
+     *  Menyimpan path Output.
      **/
-    protected readonly string $basePath;
+    protected readonly string $pathOutput;
 
 
     /**
@@ -46,16 +48,16 @@ class KurumiDirective implements KurumiDirectiveInterface {
 
 
     /**
-     *
-     *  @method __construct()
      *  
      *  Menginisialisasi property.
      *
-     *  @param string $basePath
+     *  @param string $pathInput
+     *  @param string $pathOutput 
      **/
-    public function __construct(string $basePath)
+    public function __construct(string $pathInput, string $pathOutput)
     {
-        $this->basePath = $basePath;
+        $this->pathInput = $pathInput;
+        $this->pathOutput = $pathOutput;
         $this->addDefaultDirectives();
     }
 
@@ -63,21 +65,21 @@ class KurumiDirective implements KurumiDirectiveInterface {
 
     /**
      *  
-     *  Handler load file yang akan digenerate.
-     *  dan kembalikan hasilnya.
+     *  Handle load file yang akan digenerate dan 
+     *  kembalikan hasilnya.
      *  
      *  @param string $path
      *  @return string 
      *  @throws \Exception jika file template tidak ada 
      **/
-    private function loadTemplate(string $path): string
+    protected function loadFile(string $path): string
     {
-        $templatePath = $this->basePath . $path . self::DEFAULT_FILE_EXTENSION;
-        if(!file_exists($templatePath)) {
-            throw new \Exception("Files template tidak ditemukan: $templatePath");
+        $pathFile = $this->pathInput . $path . self::DEFAULT_FILE_EXTENSION;
+        if(!file_exists($pathFile)) {
+            throw new \Exception("Files tidak ditemukan: $pathFile");
         }
 
-        return file_get_contents($templatePath);
+        return file_get_contents($pathFile);
     }
 
 
@@ -170,14 +172,14 @@ class KurumiDirective implements KurumiDirectiveInterface {
      **/
     public function render(string $path): void
     {
-        $templateContent = $this->loadTemplate($path);
-        $resultContent   = $this->processesDirectives($templateContent);
+        $fileContent   = $this->loadFile($path);
+        $resultContent = $this->processesDirectives($fileContent);
 
-        $destinationDirectory = self::DEFAULT_FOLDER_GENERATE;
+        $destinationDirectory = $this->pathOutput;
         if (!file_exists($destinationDirectory)) {
             mkdir($destinationDirectory, 0777 , true);
         }
 
-        file_put_contents(self::DEFAULT_FOLDER_GENERATE . pathToDot($path) . '.php', $resultContent);
+        file_put_contents($destinationDirectory . pathToDot($path) . '.php', $resultContent);
     }
 }
