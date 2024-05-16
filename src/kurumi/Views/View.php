@@ -13,7 +13,7 @@ use Kurumi\KurumiEngines\
 /**
  *
  *
- *  Class khusus kebutuhan menangani tampilan.
+ *  Class khusus kebutuhan menangani views.
  *
  *  @author Lutfi Aulia Sidik 
  **/
@@ -53,7 +53,6 @@ class View
 
     /**
      *
-     *
      *  menginisialisasi property 
      *
      *  @param string $basePath 
@@ -62,8 +61,8 @@ class View
     public function __construct(
         KurumiTemplateInterface  $kurumiTemplate,
         KurumiDirectiveInterface $kurumiDirective,
-        string $basePath)
-    {
+        string $basePath
+    ){
         $this->kurumiDirective = $kurumiDirective;
         $this->kurumiTemplate  = $kurumiTemplate;
         $this->basePath = $basePath;
@@ -73,12 +72,15 @@ class View
 
     /**
      *  
-     *  handler views 
+     *  Validasi file, apakah file ada atau tidak ada 
+     *  apakah file berextension .kurumi.php atau tidak  
      *  
      *  @param string $view 
-     *  @return object 
+     *  @throws \Exception jika file tidak berextension .kurumi.php
+     *  @throws \Exception jika file tidak ditemukan 
+     *  @return bool 
      **/
-    protected function handlerViews(string $view): bool
+    protected function validateViews(string $view)
     {
         $pathSourceViews = PATH_VIEWS . $view . self::DEFAULT_FILE_EXTENSION;
         if (file_exists(str_replace('.kurumi.php', '.php', $pathSourceViews))) {
@@ -86,33 +88,26 @@ class View
         } elseif (!file_exists($pathSourceViews)) {
             throw new Exception("Tampaknya file ($view) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
         }
-
-        return true;
     }
 
 
 
     /**
      *
-     *
-     *  proses merender files.
+     *  Proses merender file, atau menampilkan file 
      *
      *  @param string $view 
      *  @param array $data
+     *  @return void 
      **/
     public function render(string $view, array $data = []): void
     {
-        $viewPathStorage = $this->basePath . 'app/' . pathToDot($view)  . '.php';
-        $isFileExist = $this->handlerViews($view);
+        $viewPathStorage = $this->basePath . pathToDot($view)  . '.php';
+        $this->validateViews($view);
+        $this->kurumiDirective->render($view);
         
-        if ($isFileExist) {
-            $template  = $this->kurumiTemplate;
-            $directive = $this->kurumiDirective;
-            $directive->render($view);
-            extract($data);
-
-            include_once $viewPathStorage;
-        }
-        
+        $template = $this->kurumiTemplate;
+        extract($data);
+        include_once $viewPathStorage;
     }
 }

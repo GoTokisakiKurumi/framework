@@ -33,7 +33,7 @@ $container->bind(View::class, function($container) {
     return new View(
         $container->make(KurumiTemplate::class), 
         $container->make(KurumiDirective::class),
-        PATH_STORAGE
+        PATH_STORAGE_PUBLIC
     );
 });
 
