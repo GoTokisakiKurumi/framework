@@ -3,6 +3,8 @@
 namespace Kurumi\KurumiEngines;
 
 
+use Exception;
+
 
 /**
  *
@@ -59,6 +61,27 @@ class KurumiDirective implements KurumiDirectiveInterface {
         $this->pathInput = $pathInput;
         $this->pathOutput = $pathOutput;
         $this->addDefaultDirectives();
+    }
+
+
+
+    /**
+     *
+     *  Validasi folder input dan output jika 
+     *  folder input tidak ditemukan maka buat
+     *
+     *  @return void 
+     *  @throw \Exception jika folder input tidak ditemukan.
+     **/
+    protected function validateDirectory(): void
+    {
+        if (!file_exists($this->pathInput) || !is_writable($this->pathInput)) {
+            throw new Exception("Direktori input tidak valid: {$this->pathInput}");
+        } elseif (@$this->pathOutput[-1] !== "/") {
+            throw new Exception("Direktori output tidak valid: {$this->pathOutput}");
+        } elseif (!file_exists($this->pathOutput)) {
+            mkdir($this->pathOutput, 0777, true);
+        }
     }
 
 
@@ -172,14 +195,11 @@ class KurumiDirective implements KurumiDirectiveInterface {
      **/
     public function render(string $path): void
     {
+        $this->validateDirectory();
+
         $fileContent   = $this->loadFile($path);
         $resultContent = $this->processesDirectives($fileContent);
 
-        $destinationDirectory = $this->pathOutput;
-        if (!file_exists($destinationDirectory)) {
-            mkdir($destinationDirectory, 0777 , true);
-        }
-
-        file_put_contents($destinationDirectory . pathToDot($path) . '.php', $resultContent);
+        file_put_contents($this->pathOutput . pathToDot($path) . '.php', $resultContent);
     }
 }
