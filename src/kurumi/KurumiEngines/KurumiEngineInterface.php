@@ -6,17 +6,16 @@ namespace Kurumi\KurumiEngines;
 
 /**
  *
- *  interface KurumiTransformInterface 
+ *  interface KurumiEngineInterface 
  *
  *  @author Lutfi Aulia Sidik
  **/
-interface KurumiDirectiveInterface {
+interface KurumiEngineInterface {
 
 
 
     /**
      *
-     *  @method render()
      *  @param string $path
      *  @return void
      **/ 

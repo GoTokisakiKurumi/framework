@@ -12,12 +12,11 @@ namespace Kurumi\KurumiEngines;
 abstract class KurumiEngine
 {
 
+
     /**
      *
      *  Default file extension. 
      **/
     const DEFAULT_FILE_EXTENSION = ".kurumi.php";
 
-
-    abstract public function render(string $path): void;
 }

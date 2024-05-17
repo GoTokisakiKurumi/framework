@@ -8,8 +8,7 @@ use Exception;
 use Kurumi\KurumiEngines\
 { 
     KurumiEngine,
-    KurumiDirectiveInterface,
-    KurumiTemplateInterface
+    KurumiEngineInterface
 };
 
 
@@ -28,13 +27,13 @@ class View extends KurumiEngine
      *
      *  menginisialisasi property 
      *
-     *  @property-read KurumiTemplateInterface  $kurumiTemplate 
-     *  @property-read KurumiDirectiveInterface $kurumiDirective
+     *  @property-read KurumiEngineInterface $kurumiTemplate 
+     *  @property-read KurumiEngineInterface $kurumiDirective
      *  @property-read string $basePath 
      **/
     public function __construct(
-        protected readonly KurumiTemplateInterface  $kurumiTemplate,
-        protected readonly KurumiDirectiveInterface $kurumiDirective,
+        protected readonly KurumiEngineInterface $kurumiTemplate,
+        protected readonly KurumiEngineInterface $kurumiDirective,
         protected readonly string $basePath
     )
     {
