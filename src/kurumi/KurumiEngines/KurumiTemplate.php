@@ -1,37 +1,23 @@
 <?php
 
+
 namespace Kurumi\KurumiEngines;
+
 
 use Exception;
 use Kurumi\Views\View;
 
+
 /**
  *
- *
- *  class KurumiTemplate 
- *
- *  untuk mengatur kebutuhan layouting.
+ *  Class KurumiTemplate bertanggung jawab 
+ *  untuk mengatur kebutuhan template.
  *
  *  @author Lutfi Aulia Sidik 
  *
  **/
-class KurumiTemplate implements KurumiTemplateInterface {
-
-    /**
-     * 
-     *  Default file extension.
-     *
-     **/
-    const DEFAULT_FILE_EXTENSION = '.kurumi.php';
-
-    
-    /**
-     *  
-     *  @property $transform 
-     *
-     *  Menyimpan object dari class KurumiTransform.
-     **/
-    protected KurumiDirectiveInterface $directive;
+final class KurumiTemplate extends KurumiEngine implements KurumiTemplateInterface
+{
         
    
     /**
@@ -95,7 +81,6 @@ class KurumiTemplate implements KurumiTemplateInterface {
 
     /**
      *  
-     *  
      *  Memulai content yang akan ditampilkan.
      *  
      *  @param string $name 
@@ -107,10 +92,7 @@ class KurumiTemplate implements KurumiTemplateInterface {
         self::$nameContents[$name] = $name;
         self::$key = $name;
 
-        if (!is_null($value)) {
-            self::$contents[$name] = $value;
-        }
-
+        if (!is_null($value)) self::$contents[$name] = $value;
         return ob_start();
     }
 
@@ -118,7 +100,7 @@ class KurumiTemplate implements KurumiTemplateInterface {
 
     /**
      *
-     *  Menyimpan Content dan sebagai pembatas content
+     *  Menyimpan content dan sebagai pembatas content
      *  yang disimpan.
      *
      *  @return void  
@@ -198,7 +180,12 @@ class KurumiTemplate implements KurumiTemplateInterface {
      *  @return void 
      *
      **/
-    private function handlerImportFile(string $path, string $key, string $fileExtension, string $generateTo)
+    private function handlerImportFile(
+        string $path,
+        string $key,
+        string $fileExtension,
+        string $generateTo
+    )
     {
 
         $startKey = "/\/\*\*\[\b$key\b\]\*\*\//";
@@ -245,7 +232,7 @@ class KurumiTemplate implements KurumiTemplateInterface {
      *  Render file/tampilkan view.
      *  
      *  @param string $path 
-     *  @param string $data 
+     *  @param array  $data 
      *  @return void 
      **/
     public function render(string $path, array $data = []): void

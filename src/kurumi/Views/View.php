@@ -1,10 +1,13 @@
 <?php
 
+
 namespace Kurumi\Views;
+
 
 use Exception;
 use Kurumi\KurumiEngines\
 { 
+    KurumiEngine,
     KurumiDirectiveInterface,
     KurumiTemplateInterface
 };
@@ -12,60 +15,30 @@ use Kurumi\KurumiEngines\
 
 /**
  *
- *
- *  Class khusus kebutuhan menangani views.
+ *  Class View yang bertanggung jawab atas kebutuhan
+ *  menampilkan file.
  *
  *  @author Lutfi Aulia Sidik 
  **/
-class View
+class View extends KurumiEngine 
 {
-
-    /**
-     * 
-     *  Default file extension.
-     **/
-    const DEFAULT_FILE_EXTENSION = '.kurumi.php';
-
-
-    /**
-     *  
-     *  Menyimpan class instance KurumiTemplate
-     **/
-    protected KurumiTemplateInterface $kurumiTemplate;
-
-
-    /**
-     *  
-     *  Menyimpan class instance KurumiDirective 
-     **/
-    protected KurumiDirectiveInterface $kurumiDirective;
-
-
-    /**
-     *
-     *  @property string $basePath 
-     *  
-     *  menyimpan path dasar folder.
-     **/
-    protected readonly string $basePath;
-
 
 
     /**
      *
      *  menginisialisasi property 
      *
-     *  @param string $basePath 
-     *  @param ContainerInterface $container
+     *  @property-read KurumiTemplateInterface  $kurumiTemplate 
+     *  @property-read KurumiDirectiveInterface $kurumiDirective
+     *  @property-read string $basePath 
      **/
     public function __construct(
-        KurumiTemplateInterface  $kurumiTemplate,
-        KurumiDirectiveInterface $kurumiDirective,
-        string $basePath
-    ){
-        $this->kurumiDirective = $kurumiDirective;
-        $this->kurumiTemplate  = $kurumiTemplate;
-        $this->basePath = $basePath;
+        protected readonly KurumiTemplateInterface  $kurumiTemplate,
+        protected readonly KurumiDirectiveInterface $kurumiDirective,
+        protected readonly string $basePath
+    )
+    {
+
     }
 
 
@@ -78,11 +51,10 @@ class View
      *  @param string $view 
      *  @throws \Exception jika file tidak berextension .kurumi.php
      *  @throws \Exception jika file tidak ditemukan 
-     *  @return bool 
      **/
     protected function validateViews(string $view)
     {
-        $pathSourceViews = PATH_VIEWS . $view . self::DEFAULT_FILE_EXTENSION;
+        $pathSourceViews = PATH_VIEWS . $view . parent::DEFAULT_FILE_EXTENSION;
         if (file_exists(str_replace('.kurumi.php', '.php', $pathSourceViews))) {
             throw new Exception("($view.php) Sepertinya kamu melupakan namaku?");
         } elseif (!file_exists($pathSourceViews)) {
@@ -97,7 +69,7 @@ class View
      *  Proses merender file, atau menampilkan file 
      *
      *  @param string $view 
-     *  @param array $data
+     *  @param array  $data
      *  @return void 
      **/
     public function render(string $view, array $data = []): void

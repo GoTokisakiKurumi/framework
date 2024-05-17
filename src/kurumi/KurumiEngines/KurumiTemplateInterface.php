@@ -1,13 +1,7 @@
 <?php
 
 
-/**
- *
- *
- *  @author Lutfi Aulia Sidik 
- **/
 namespace Kurumi\KurumiEngines;
-
 
 
 /**

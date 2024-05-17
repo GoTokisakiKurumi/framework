@@ -8,35 +8,13 @@ use Exception;
 
 /**
  *
- *  Class KurumiDirective
+ *  Class KurumiDirective yang bertanggung jawab 
+ *  atas semua hal yang mengenai directive.
  *
  *  @author Lutfi Aulia Sidik
  **/
-class KurumiDirective implements KurumiDirectiveInterface {
-
-    /**
-     * 
-     *  Default file extension.
-     **/
-    const DEFAULT_FILE_EXTENSION = '.kurumi.php';
-
-
-    /**
-     * 
-     *  @property string $pathOutput 
-     *
-     *  Menyimpan path input.
-     **/
-    protected readonly string $pathInput;
-
-
-    /**
-     * 
-     *  @property string $pathOutput 
-     *
-     *  Menyimpan path Output.
-     **/
-    protected readonly string $pathOutput;
+final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInterface
+{
 
 
     /**
@@ -51,15 +29,17 @@ class KurumiDirective implements KurumiDirectiveInterface {
 
     /**
      *  
-     *  Menginisialisasi property.
+     *  Jalankan method yang perlu dijalankan saat 
+     *  pertamakali class dipanggil.
      *
-     *  @param string $pathInput
-     *  @param string $pathOutput 
+     *  @property-read string $pathInput menyimpan path input
+     *  @property-read string $pathOutput menyimpan path output
      **/
-    public function __construct(string $pathInput, string $pathOutput)
+    public function __construct(
+        public readonly string $pathInput,
+        public readonly string $pathOutput
+    )
     {
-        $this->pathInput = $pathInput;
-        $this->pathOutput = $pathOutput;
         $this->addDefaultDirectives();
     }
 
@@ -73,7 +53,7 @@ class KurumiDirective implements KurumiDirectiveInterface {
      *  @return void 
      *  @throw \Exception jika folder input tidak ditemukan.
      **/
-    protected function validateDirectory(): void
+    private function validateDirectory(): void
     {
         if (!file_exists($this->pathInput) || !is_writable($this->pathInput)) {
             throw new Exception("Direktori input tidak valid: {$this->pathInput}");
@@ -95,9 +75,9 @@ class KurumiDirective implements KurumiDirectiveInterface {
      *  @return string 
      *  @throws \Exception jika file template tidak ada 
      **/
-    protected function loadFile(string $path): string
+    private function loadFile(string $path): string
     {
-        $pathFile = $this->pathInput . $path . self::DEFAULT_FILE_EXTENSION;
+        $pathFile = $this->pathInput . $path . parent::DEFAULT_FILE_EXTENSION;
         if(!file_exists($pathFile)) {
             throw new \Exception("Files tidak ditemukan: $pathFile");
         }
