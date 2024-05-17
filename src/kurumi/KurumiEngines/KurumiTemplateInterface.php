@@ -38,7 +38,7 @@ interface KurumiTemplateInterface {
     public function importFile(string $view, string $path, string $key = null): void;
 
 
-    public function renderDirective(string $path, array $data = []): void;
+    public function render(string $path, array $data = []): void;
 
 }
 

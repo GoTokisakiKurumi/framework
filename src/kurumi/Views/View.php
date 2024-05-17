@@ -105,7 +105,7 @@ class View
         $viewPathStorage = $this->basePath . pathToDot($view)  . '.php';
         $this->validateViews($view);
         $this->kurumiDirective->render($view);
-        
+
         $template = $this->kurumiTemplate;
         extract($data);
         include_once $viewPathStorage;

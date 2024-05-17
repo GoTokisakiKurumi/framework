@@ -43,8 +43,8 @@ $container->bind(KurumiDirective::class, function() {
 });
 
 // Bind class KurumiTemplate
-$container->bind(KurumiTemplate::class, function($container) {
-    return new KurumiTemplate($container->make(KurumiDirective::class));
+$container->bind(KurumiTemplate::class, function() {
+    return new KurumiTemplate();
 });
 
 // Bind class Command 

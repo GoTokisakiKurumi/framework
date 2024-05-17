@@ -67,9 +67,9 @@ class KurumiTemplate implements KurumiTemplateInterface {
      *
      *  Inisialisasi property DI.
      **/
-    public function __construct(KurumiDirectiveInterface $directive)
+    public function __construct()
     {
-        $this->directive = $directive;
+
     }
     
 
@@ -139,7 +139,7 @@ class KurumiTemplate implements KurumiTemplateInterface {
      **/
     public function includeFile(string $path, array $data = []): void
     {
-        $this->renderDirective($path, $data);
+        $this->render($path, $data);
     }
 
 
@@ -154,7 +154,7 @@ class KurumiTemplate implements KurumiTemplateInterface {
      **/
     public function extendContent(string $path): void
     {
-        $this->renderDirective($path);
+        $this->render($path);
     }
 
 
@@ -242,14 +242,13 @@ class KurumiTemplate implements KurumiTemplateInterface {
 
     /**
      *  
-     *  Generate file syntax directive menjadi file 
-     *  file syntax php biasa. 
-     *
-     *  file directive ->  (.*).kurumi.php 
+     *  Render file/tampilkan view.
      *  
      *  @param string $path 
+     *  @param string $data 
+     *  @return void 
      **/
-    public function renderDirective(string $path, array $data = []): void
+    public function render(string $path, array $data = []): void
     {
         global $container;
         $container->make(View::class)->render($path, $data);
