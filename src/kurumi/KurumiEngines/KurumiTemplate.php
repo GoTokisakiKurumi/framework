@@ -143,87 +143,155 @@ final class KurumiTemplate extends KurumiEngine implements KurumiEngineInterface
 
     /**
      *  
-     *  Memungkinkan untuk menulis file css atau js 
-     *  secara terpisah dan dicompile/generate
-     *  menjadi satu file.
-     *   
+     *  Mengambil content file.
+     *
+     *  @param string $path 
+     *  @throws \Exception jika file tidak ditemukan 
+     *  @return string  
+     **/
+    protected function getFileContent(string $path): string
+    {
+        if (!file_exists($path)) {
+            throw new Exception("($path) file tidak ditemukan.");
+        }
+
+        return file_get_contents($path);
+    }
+
+
+
+    /**
+     *  
+     *  Membuat bahan untuk keperluan method
+     *  importFile,
+     *  
      *  @param string $view 
      *  @param string $path 
-     *  @return void 
+     *  @return array 
      **/
-    public function importFile(string $view, string $path, string $key = null): void
+    protected function makeImportFileMaterials(string $view, string $path): array
     {
-            
-        $relativeFolder = explode('/', $view)[0];
-        $pathSourceFile = PATH_VIEWS . $relativeFolder . '/' . $path;
-        $key = $key ?? $relativeFolder;
-        $fileExtension  = explode('.', $path)[1];
+        $relativeFolder = array_slice(explode('/', $view), 0, -1);
+        $pathSourceFile = PATH_VIEWS . join('/', $relativeFolder) . '/' . $path;
+        $fileExtensions = array_slice(explode('.', $path), -1)[0];
 
-        $this->handlerImportFile(
-            $pathSourceFile,
-            $key,
-            $fileExtension,
-            PATH_PUBLIC
-        );  
+        return [
+            "relativeFolder" => join('.', $relativeFolder),
+            "pathInputFile" => $pathSourceFile,
+            "fileExtensions" => $fileExtensions
+        ];
     }
 
 
 
     /**
      *
-     *  @method importFile()
-     *
-     *  @param string $path 
-     *  @param string $key 
+     *  Membuat folder dan file output untuk method 
+     *  importFile jika tidak ditemukan, dan kembalikan
+     *  path file output nya.
+     * 
+     *  @param string $pathPublic
      *  @param string $fileExtension 
-     *  @param string $generateTo
-     *  @return void 
-     *
+     *  @return string
+     **/
+    protected function makeImportFileOutput(string $pathPublic, string $fileExtension): string
+    {
+        $destinationDirectory = $pathPublic . $fileExtension . '/';
+        if (!file_exists($destinationDirectory)) {
+            mkdir($destinationDirectory, 0777, true);
+        }
+
+        $pathOutputFile = $destinationDirectory . 'app.' . $fileExtension;
+        if (!file_exists($pathOutputFile)) {
+            file_put_contents($pathOutputFile, '');
+        }
+
+        return $pathOutputFile;
+    }
+
+
+
+    /**
+     *  
+     *  Membuat file baru (output) dengan key yang 
+     *  diberikan, jika terdapat perubahan pada
+     *  file (input) maka ubah file (output) nya
+     *  sesuai dengan key nya.
+     *  
+     *  @param string $pathOutputFile
+     *  @param string $inputContentFile
+     *  @param string $outputContentFile
+     *  @param string $key 
      **/
     private function handlerImportFile(
-        string $path,
-        string $key,
-        string $fileExtension,
-        string $generateTo
+        string $pathOutputFile,
+        string $inputContentFile,
+        string $outputContentFile,
+        string $key
     )
     {
 
-        $startKey = "/\/\*\*\[\b$key\b\]\*\*\//";
-        $endKey = "/\/\*\*\[\bend$key\b\]\*\*\//";
+        $pattern = "/\/\*\*\[\b$key\b\]\*\*\/|\/\*\*\[\bend$key\b\]\*\*\//";
+    
+        preg_match_all($pattern, $outputContentFile, $matches, PREG_OFFSET_CAPTURE);
 
-        $destinationDirectory = $generateTo . $fileExtension . '/';
-        $pathGenerateFile = $destinationDirectory . 'app.' . $fileExtension;
-
-        if (!file_exists($path)) return throw new Exception("($path) file tidak ditemukan.");
-        if (!file_exists($destinationDirectory)) mkdir($destinationDirectory, 0777, true);
-        if (!file_exists($pathGenerateFile)) file_put_contents($pathGenerateFile, '');
-
-        $getSourceContentFile   = file_get_contents($path);
-        $getGenarateContentFile = file_get_contents($pathGenerateFile);
-
-        preg_match_all($startKey, $getGenarateContentFile, $startMatches, PREG_OFFSET_CAPTURE);
-        preg_match_all($endKey, $getGenarateContentFile, $endMatches, PREG_OFFSET_CAPTURE);
-
-        if (empty($startMatches[0]) || empty($endMatches[0])) {
+        if (empty($matches[0])) {
             return file_put_contents(
-                $pathGenerateFile, 
-                "/**[$key]**/\n\n{$getSourceContentFile}\n/**[end$key]**/\n\n",
+                $pathOutputFile, 
+                "/**[$key]**/\n\n{$inputContentFile}\n/**[end$key]**/\n\n",
                 FILE_APPEND
             );                
         }
 
-        $startOffsets = array_column($startMatches[0], 1);
-        $endOffsets   = array_column($endMatches[0], 1);
 
-        foreach ($startOffsets as $index => $startOffset) {               
-            $endOffset = $endOffsets[$index];      
-            $beforeSection  = substr($getGenarateContentFile, 0, $startOffset + strlen($startMatches[0][$index][0]));
-            $afterSection   = substr($getGenarateContentFile, $endOffset);
-            $newContentFile = $beforeSection . "\n\n$getSourceContentFile\n" . $afterSection;
+        foreach ($matches[0] as $i => $match) 
+        {
+            if (strpos($match[0], "end$key") === false && isset($matches[0][$i + 1]) && strpos($matches[0][$i + 1][0], "end$key") !== false)
+            {
+                $startOffset = $match[1] + strlen($match[0]);
+                $endOffset = $matches[0][$i + 1][1];
+
+                $beforeSection = substr($outputContentFile, 0, $startOffset);
+                $afterSection  = substr($outputContentFile, $endOffset);
+
+                $newContentFile = $beforeSection . "\n\n$inputContentFile\n" . $afterSection;
+                $i++;
+            }
         }
 
-        file_put_contents($pathGenerateFile, $newContentFile);
-    }   
+        file_put_contents($pathOutputFile, $newContentFile);
+    }
+
+
+
+    /**
+     *  
+     *  Memungkinkan untuk menulis file css atau js 
+     *  secara terpisah dan digenerate menjadi satu file.
+     *   
+     *  @param string $view 
+     *  @param string $path 
+     *  @return void 
+     **/
+    public function importFile(string $view, string $path, string $key = null): void
+    {            
+        $materials = $this->makeImportFileMaterials($view, $path);
+
+        $pathOutputFile = $this->makeImportFileOutput(
+            PATH_PUBLIC,
+            $materials["fileExtensions"]
+        );
+        
+        $getInputContentFile  = $this->getFileContent($materials["pathInputFile"]);
+        $getOutputContentFile = $this->getFileContent($pathOutputFile);
+        
+        $this->handlerImportFile(
+            $pathOutputFile,
+            $getInputContentFile,
+            $getOutputContentFile,
+            $key ?? $materials["relativeFolder"],
+        );  
+    }
     
 
 
