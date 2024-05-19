@@ -46,6 +46,24 @@ final class KurumiDirective extends KurumiEngine implements KurumiEngineInterfac
 
 
     /**
+     *  
+     *  Load file yang akan digenerate dan 
+     *  kembalikan hasilnya.
+     *  
+     *  @param string $path
+     *  @return string 
+     *  @throws \Exception jika file tidak ada 
+     **/
+    protected function getFileContent(string $path): string
+    {
+        $pathFile = $this->pathInput . $path . parent::DEFAULT_FILE_EXTENSION;
+
+        return parent::getFileContent($pathFile);
+    }
+
+
+
+    /**
      *
      *  Validasi folder input dan output jika 
      *  folder input tidak ditemukan maka buat
@@ -62,27 +80,6 @@ final class KurumiDirective extends KurumiEngine implements KurumiEngineInterfac
         } elseif (!file_exists($this->pathOutput)) {
             mkdir($this->pathOutput, 0777, true);
         }
-    }
-
-
-
-    /**
-     *  
-     *  Handle load file yang akan digenerate dan 
-     *  kembalikan hasilnya.
-     *  
-     *  @param string $path
-     *  @return string 
-     *  @throws \Exception jika file template tidak ada 
-     **/
-    private function loadFile(string $path): string
-    {
-        $pathFile = $this->pathInput . $path . parent::DEFAULT_FILE_EXTENSION;
-        if(!file_exists($pathFile)) {
-            throw new \Exception("Files tidak ditemukan: $pathFile");
-        }
-
-        return file_get_contents($pathFile);
     }
 
 
@@ -178,7 +175,7 @@ final class KurumiDirective extends KurumiEngine implements KurumiEngineInterfac
     {
         $this->validateDirectory();
 
-        $fileContent   = $this->loadFile($path);
+        $fileContent   = $this->getFileContent($path);
         $resultContent = $this->processesDirectives($fileContent);
 
         file_put_contents($this->pathOutput . pathToDot($path) . '.php', $resultContent);

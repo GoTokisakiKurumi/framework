@@ -4,7 +4,6 @@
 namespace Kurumi\KurumiEngines;
 
 
-use Exception;
 use Kurumi\Views\View;
 
 
@@ -143,27 +142,8 @@ final class KurumiTemplate extends KurumiEngine implements KurumiEngineInterface
 
     /**
      *  
-     *  Mengambil content file.
-     *
-     *  @param string $path 
-     *  @throws \Exception jika file tidak ditemukan 
-     *  @return string  
-     **/
-    protected function getFileContent(string $path): string
-    {
-        if (!file_exists($path)) {
-            throw new Exception("($path) file tidak ditemukan.");
-        }
-
-        return file_get_contents($path);
-    }
-
-
-
-    /**
-     *  
      *  Membuat bahan untuk keperluan method
-     *  importFile,
+     *  importFile.
      *  
      *  @param string $view 
      *  @param string $path 
@@ -286,8 +266,8 @@ final class KurumiTemplate extends KurumiEngine implements KurumiEngineInterface
             $materials["fileExtensions"]
         );
         
-        $getInputContentFile  = $this->getFileContent($materials["pathInputFile"]);
-        $getOutputContentFile = $this->getFileContent($pathOutputFile);
+        $getInputContentFile  = parent::getFileContent($materials["pathInputFile"]);
+        $getOutputContentFile = parent::getFileContent($pathOutputFile);
         
         $this->handlerImportFile(
             $pathOutputFile,
