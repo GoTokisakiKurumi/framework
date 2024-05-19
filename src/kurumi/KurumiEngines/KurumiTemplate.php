@@ -219,30 +219,34 @@ final class KurumiTemplate extends KurumiEngine implements KurumiEngineInterface
      *  sesuai dengan key nya.
      *  
      *  @param string $pathOutputFile
+     *  @param string $fileExtensions
      *  @param string $inputContentFile
      *  @param string $outputContentFile
      *  @param string $key 
      **/
     private function handlerImportFile(
         string $pathOutputFile,
+        string $fileExtensions,
         string $inputContentFile,
         string $outputContentFile,
-        string $key
+        string $key,
     )
     {
 
-        $pattern = "/\/\*\*\[\b$key\b\]\*\*\/|\/\*\*\[\bend$key\b\]\*\*\//";
-    
+        $pattern   = "/\/\*\*\[\b$key\b\]\*\*\/|\/\*\*\[\bend$key\b\]\*\*\//";
+        $markerKey = "";
+ 
         preg_match_all($pattern, $outputContentFile, $matches, PREG_OFFSET_CAPTURE);
 
-        if (empty($matches[0])) {
-            return file_put_contents(
-                $pathOutputFile, 
-                "/**[$key]**/\n\n{$inputContentFile}\n/**[end$key]**/\n\n",
-                FILE_APPEND
-            );                
+        if ($fileExtensions === "js") {
+            $markerKey = "{/**[$key]**/\n\n{$inputContentFile}\n/**[end$key]**/}\n\n";
+        } else {
+            $markerKey = "/**[$key]**/\n\n{$inputContentFile}\n/**[end$key]**/\n\n";
         }
 
+        if (empty($matches[0])) {
+            return file_put_contents($pathOutputFile, $markerKey, FILE_APPEND);
+        }
 
         foreach ($matches[0] as $i => $match) 
         {
@@ -287,9 +291,10 @@ final class KurumiTemplate extends KurumiEngine implements KurumiEngineInterface
         
         $this->handlerImportFile(
             $pathOutputFile,
+            $materials["fileExtensions"],
             $getInputContentFile,
             $getOutputContentFile,
-            $key ?? $materials["relativeFolder"],
+            $key ?? $materials["relativeFolder"]
         );  
     }
     
