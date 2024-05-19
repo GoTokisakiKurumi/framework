@@ -139,6 +139,7 @@ final class KurumiDirective extends KurumiEngine implements KurumiEngineInterfac
             '/@kurumiContent\s*\((.*)\)\s*/' => '<?php $template->content($1) ?>',
             '/@kurumiInclude\s*\((.*)\)\s*/' =>'<?php $template->includeFile($1) ?>',
             '/@kurumiImport\s*\((.*)\)\s*/' =>'<?php $template->importFile($view, $1) ?>',
+            '/@oppai\s*\((.*)\)\s*/' => '<?php var_dump($1); ?>',
             '/^\s*[\r\n]+/m' => '',
             //'/[\r\n]+/' => ''
         ]);
