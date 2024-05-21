@@ -29,6 +29,44 @@ class Container implements ContainerInterface
     private array $bindings = [];
 
 
+    /**
+     * 
+     *  Menyimpan instance object container
+     *
+     *  @property Container $instance
+     **/
+    private static ?Container $instance = null;
+    
+
+
+    /**
+     *  
+     *  Untuk mencegah object diinstance secara
+     *  langsung 
+     **/
+    private function __construct(){}
+    
+
+
+    /**
+     *
+     *  (singleton)
+     *
+     *  Mendapatkan instance object secara langsung 
+     *  dan memastikan object diinstance satu kali
+     *
+     *  @return Container 
+     **/
+    public static function getInstances(): Container
+    {
+        if (self::$instance === null) {
+            self::$instance = new Container;
+        }
+
+        return self::$instance;
+    }
+
+
 
     /**
      *

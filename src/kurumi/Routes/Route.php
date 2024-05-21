@@ -2,7 +2,7 @@
 
 namespace Kurumi\Routes;
 
-
+use Kurumi\Container\Container;
 use Kurumi\Routes\RouteInterfaces;
 
 
@@ -79,8 +79,6 @@ class Route implements RouteInterfaces {
      **/
     public static function run(): void
     {
-        global $container;
-
         $requestUri = parse_url($_SERVER["REQUEST_URI"]);
         $requestPath = $requestUri["path"];
         $requestMethod = $_SERVER["REQUEST_METHOD"];
@@ -101,6 +99,7 @@ class Route implements RouteInterfaces {
         }
 
         if (is_array($callback)) {
+            $container = Container::getInstances();
             $container->bind($callback[0]);
             $controller = $container->make($callback[0]);
             $method = $callback[1];
