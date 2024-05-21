@@ -170,13 +170,13 @@ final class KurumiTemplate extends KurumiEngine implements KurumiEngineInterface
      *  importFile jika tidak ditemukan, dan kembalikan
      *  path file output nya.
      * 
-     *  @param string $pathPublic
+     *  @param string $pathDirectory
      *  @param string $fileExtension 
      *  @return string
      **/
-    protected function makeImportFileOutput(string $pathPublic, string $fileExtension): string
+    protected function makeImportFileOutput(string $pathDirectory, string $fileExtension): string
     {
-        $destinationDirectory = $pathPublic . $fileExtension . '/';
+        $destinationDirectory = $pathDirectory . $fileExtension . '/';
         if (!file_exists($destinationDirectory)) {
             mkdir($destinationDirectory, 0777, true);
         }
@@ -262,19 +262,19 @@ final class KurumiTemplate extends KurumiEngine implements KurumiEngineInterface
         $materials = $this->makeImportFileMaterials($view, $path);
 
         $pathOutputFile = $this->makeImportFileOutput(
-            PATH_PUBLIC,
-            $materials["fileExtensions"]
+            pathDirectory: PATH_PUBLIC,
+            fileExtension: $materials["fileExtensions"]
         );
         
         $getInputContentFile  = parent::getFileContent($materials["pathInputFile"]);
         $getOutputContentFile = parent::getFileContent($pathOutputFile);
         
         $this->handlerImportFile(
-            $pathOutputFile,
-            $materials["fileExtensions"],
-            $getInputContentFile,
-            $getOutputContentFile,
-            $key ?? $materials["relativeFolder"]
+            key: $key ?? $materials["relativeFolder"],
+            pathOutputFile: $pathOutputFile,
+            fileExtensions: $materials["fileExtensions"],
+            inputContentFile: $getInputContentFile,
+            outputContentFile: $getOutputContentFile
         );  
     }
     
