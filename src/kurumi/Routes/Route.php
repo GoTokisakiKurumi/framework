@@ -3,9 +3,7 @@
 namespace Kurumi\Routes;
 
 
-
 use Kurumi\Routes\RouteInterfaces;
-
 
 
 /**
@@ -81,6 +79,8 @@ class Route implements RouteInterfaces {
      **/
     public static function run(): void
     {
+        global $container;
+
         $requestUri = parse_url($_SERVER["REQUEST_URI"]);
         $requestPath = $requestUri["path"];
         $requestMethod = $_SERVER["REQUEST_METHOD"];
@@ -100,8 +100,18 @@ class Route implements RouteInterfaces {
             return;
         }
 
-        echo call_user_func_array($callback, [
-            array_merge($_GET, $_POST)
-        ]);
+        if (is_array($callback)) {
+            $container->bind($callback[0]);
+            $controller = $container->make($callback[0]);
+            $method = $callback[1];
+
+            call_user_func_array([$controller, $method], [
+                array_merge($_POST, $_GET)
+            ]);
+        } else {
+            echo call_user_func_array($callback, [
+                array_merge($_GET, $_POST)
+            ]);
+        }
     }
 }
