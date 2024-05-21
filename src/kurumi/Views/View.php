@@ -8,6 +8,8 @@ use Exception;
 use Kurumi\KurumiEngines\
 { 
     KurumiEngine,
+    KurumiTemplate,
+    KurumiDirective,
     KurumiEngineInterface
 };
 
@@ -22,22 +24,41 @@ use Kurumi\KurumiEngines\
 class View extends KurumiEngine 
 {
 
+    /**
+     *
+     *  Menyimpan base path.
+     *  
+     *  @property-read string $basePath
+     **/
+    public readonly string $basePath;
+
+
 
     /**
      *
-     *  menginisialisasi property 
+     *  Menginisialisasi property 
      *
      *  @property-read KurumiEngineInterface $kurumiTemplate 
      *  @property-read KurumiEngineInterface $kurumiDirective
-     *  @property-read string $basePath 
      **/
     public function __construct(
-        protected readonly KurumiEngineInterface $kurumiTemplate,
-        protected readonly KurumiEngineInterface $kurumiDirective,
-        protected readonly string $basePath
-    )
-    {
+        protected readonly KurumiTemplate  $kurumiTemplate,
+        protected readonly KurumiDirective $kurumiDirective,
+    ){}
 
+
+
+    /**
+     * 
+     *  Set path ke property $basePath.
+     *  
+     *  @param string $path 
+     *  @retrun object 
+     **/
+    public function setPath(string $path): object
+    {
+        $this->basePath = $path;
+        return $this;
     }
 
 
@@ -50,8 +71,9 @@ class View extends KurumiEngine
      *  @param string $view 
      *  @throws \Exception jika file tidak berextension .kurumi.php
      *  @throws \Exception jika file tidak ditemukan 
+     *  @return void 
      **/
-    protected function validateViews(string $view)
+    protected function validateViews(string $view): void
     {
         $pathSourceViews = PATH_VIEWS . $view . parent::DEFAULT_FILE_EXTENSION;
         if (file_exists(str_replace('.kurumi.php', '.php', $pathSourceViews))) {
@@ -75,7 +97,10 @@ class View extends KurumiEngine
     {
         $viewPathStorage = $this->basePath . pathToDot($view)  . '.php';
         $this->validateViews($view);
-        $this->kurumiDirective->render($view);
+        $this->kurumiDirective->setDirectory(
+            input: PATH_VIEWS,
+            output: $this->basePath
+        )->render($view);
 
         $template = $this->kurumiTemplate;
         extract($data);

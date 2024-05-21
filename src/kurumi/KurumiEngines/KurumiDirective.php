@@ -16,6 +16,24 @@ use Exception;
 final class KurumiDirective extends KurumiEngine implements KurumiEngineInterface
 {
 
+    
+    /**
+     * 
+     *  Menyimpan directory input.
+     *
+     *  @property string $directoryInput
+     **/
+    private string $directoryInput = "";
+
+    
+    /**
+     * 
+     *  Menyimpan directory output.
+     *
+     *  @property string $directoryOutput
+     **/
+    private string $directoryOutput = "";
+
 
     /**
      *  
@@ -32,15 +50,28 @@ final class KurumiDirective extends KurumiEngine implements KurumiEngineInterfac
      *  Jalankan method yang perlu dijalankan saat 
      *  pertamakali class dipanggil.
      *
-     *  @property-read string $pathInput menyimpan path input
-     *  @property-read string $pathOutput menyimpan path output
      **/
-    public function __construct(
-        public readonly string $pathInput,
-        public readonly string $pathOutput
-    )
+    public function __construct()
     {
         $this->addDefaultDirectives();
+    }
+
+
+    
+    /**
+     * 
+     *  Set directory input dan output.
+     *
+     *  @param string $input
+     *  @param string $output
+     *  @return object 
+     **/
+    public function setDirectory(string $input, string $output): object
+    {
+        $this->directoryInput  = $input;
+        $this->directoryOutput = $output;
+
+        return $this;
     }
 
 
@@ -52,11 +83,10 @@ final class KurumiDirective extends KurumiEngine implements KurumiEngineInterfac
      *  
      *  @param string $path
      *  @return string 
-     *  @throws \Exception jika file tidak ada 
      **/
     protected function getFileContent(string $path): string
     {
-        $pathFile = $this->pathInput . $path . parent::DEFAULT_FILE_EXTENSION;
+        $pathFile = $this->directoryInput . $path . parent::DEFAULT_FILE_EXTENSION;
 
         return parent::getFileContent($pathFile);
     }
@@ -66,19 +96,20 @@ final class KurumiDirective extends KurumiEngine implements KurumiEngineInterfac
     /**
      *
      *  Validasi folder input dan output jika 
-     *  folder input tidak ditemukan maka buat
+     *  folder output tidak ditemukan maka buat
      *
-     *  @return void 
      *  @throw \Exception jika folder input tidak ditemukan.
+     *  @throw \Exception jika folder output tidak ditemukan.
+     *  @return void 
      **/
     private function validateDirectory(): void
     {
-        if (!file_exists($this->pathInput) || !is_writable($this->pathInput)) {
-            throw new Exception("Direktori input tidak valid: {$this->pathInput}");
-        } elseif (@$this->pathOutput[-1] !== "/") {
-            throw new Exception("Direktori output tidak valid: {$this->pathOutput}");
-        } elseif (!file_exists($this->pathOutput)) {
-            mkdir($this->pathOutput, 0777, true);
+        if (!file_exists($this->directoryInput) || !is_writable($this->directoryInput)) {
+            throw new Exception("Direktori input tidak valid: {$this->directoryInput}");
+        } elseif (@$this->directoryOutput[-1] !== "/") {
+            throw new Exception("Direktori output tidak valid: {$this->directoryOutput}");
+        } elseif (!file_exists($this->directoryOutput)) {
+            mkdir($this->directoryOutput, 0777, true);
         }
     }
 
@@ -178,6 +209,6 @@ final class KurumiDirective extends KurumiEngine implements KurumiEngineInterfac
         $fileContent   = $this->getFileContent($path);
         $resultContent = $this->processesDirectives($fileContent);
 
-        file_put_contents($this->pathOutput . pathToDot($path) . '.php', $resultContent);
+        file_put_contents($this->directoryOutput . pathToDot($path) . '.php', $resultContent);
     }
 }

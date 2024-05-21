@@ -1,6 +1,8 @@
 <?php
 
+
 use Kurumi\Views\View;
+
 
 /**
  *
@@ -8,10 +10,11 @@ use Kurumi\Views\View;
  *  @patam array $data 
  *
  *  @author Lutfi Aulia Sidik 
- *
  **/
 function view(string $path, array $data = [])
 {
     global $container;
-    $container->make(View::class)->render($path, $data);
+    $container->make(View::class)
+    ->setPath(PATH_STORAGE_PUBLIC)
+    ->render($path, $data);
 }

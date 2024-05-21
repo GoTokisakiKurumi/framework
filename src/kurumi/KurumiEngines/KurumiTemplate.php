@@ -291,6 +291,8 @@ final class KurumiTemplate extends KurumiEngine implements KurumiEngineInterface
     public function render(string $path, array $data = []): void
     {
         global $container;
-        $container->make(View::class)->render($path, $data);
+        $container->make(View::class)
+        ->setPath(PATH_STORAGE_PUBLIC)
+        ->render($path, $data);
     }
 }
