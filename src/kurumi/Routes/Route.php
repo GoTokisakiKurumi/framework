@@ -99,7 +99,7 @@ class Route implements RouteInterfaces {
         }
 
         if (is_array($callback)) {
-            $container = Container::getInstances();
+            $container = Container::getInstance();
             $container->bind($callback[0]);
             $controller = $container->make($callback[0]);
             $method = $callback[1];

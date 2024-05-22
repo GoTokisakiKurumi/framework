@@ -11,7 +11,14 @@ use Kurumi\KurumiEngines\KurumiTemplate;
 use Kurumi\KurumiEngines\KurumiDirective;
 
 
-class Application extends Container {
+/**
+ *
+ *  Class yang bertanggung jawab atas
+ *  configurasi awal framework.
+ *
+ *  @author Lutfi Aulia Sidik 
+ **/
+class Application {
 
 
     
@@ -32,10 +39,11 @@ class Application extends Container {
      **/
     protected function registerClassBindings(): void
     {
-        $this->bind(View::class);
-        $this->bind(KurumiTemplate::class);
-        $this->bind(KurumiDirective::class);
-        $this->bind(Command::class);
+        $container = Container::getInstance();
+        $container->bind(View::class);
+        $container->bind(KurumiTemplate::class);
+        $container->bind(KurumiDirective::class);
+        $container->bind(Command::class);
     }
 
 
@@ -61,7 +69,7 @@ class Application extends Container {
      *  
      *  @return void
      **/
-    public static function registerFunction(): void
+    public function registerFunction(): void
     {
         require_once __DIR__ . "/../Utils/func/view.php";
         require_once __DIR__ . "/../Utils/func/define.php";

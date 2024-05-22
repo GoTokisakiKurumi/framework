@@ -42,7 +42,7 @@ class View extends KurumiEngine
      *  @property-read KurumiEngineInterface $kurumiDirective
      **/
     public function __construct(
-        protected readonly KurumiTemplate  $kurumiTemplate,
+        public ?KurumiTemplate $kurumiTemplate,
         protected readonly KurumiDirective $kurumiDirective,
     ){}
 
@@ -50,12 +50,12 @@ class View extends KurumiEngine
 
     /**
      * 
-     *  Set path ke property $basePath.
+     *  Set base path ke property $basePath.
      *  
      *  @param string $path 
      *  @retrun object 
      **/
-    public function setPath(string $path): object
+    public function setBasePath(string $path): View
     {
         $this->basePath = $path;
         return $this;

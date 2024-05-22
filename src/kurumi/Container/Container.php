@@ -9,40 +9,38 @@ use Exception;
 
 /**
  *
- *  Class Container 
+ *  Class yang bertanggung jawab atas 
+ *  IoC Container 
  *
  *  @author Lutfi Aulia Sidik 
- *
  **/
 class Container implements ContainerInterface
 {
 
+    /**
+     * 
+     *  Menyimpan instance object container.
+     *
+     *  @property ContainerInterface $instance
+     **/
+    private static ?ContainerInterface $instance = null;
 
 
     /**
      *  
-     *  Menyimpan class yang dibindings 
+     *  Menyimpan class yang dibindings.
      *
      *  @property array $bindings 
      *
      **/
     private array $bindings = [];
-
-
-    /**
-     * 
-     *  Menyimpan instance object container
-     *
-     *  @property Container $instance
-     **/
-    private static ?Container $instance = null;
     
 
 
     /**
      *  
-     *  Untuk mencegah object diinstance secara
-     *  langsung 
+     *  Mencegah object diinstance secara
+     *  langsung.
      **/
     private function __construct(){}
     
@@ -50,27 +48,7 @@ class Container implements ContainerInterface
 
     /**
      *
-     *  (singleton)
-     *
-     *  Mendapatkan instance object secara langsung 
-     *  dan memastikan object diinstance satu kali
-     *
-     *  @return Container 
-     **/
-    public static function getInstances(): Container
-    {
-        if (self::$instance === null) {
-            self::$instance = new Container;
-        }
-
-        return self::$instance;
-    }
-
-
-
-    /**
-     *
-     *  Binding class kedalam container
+     *  Binding class kedalam container.
      *
      *  @param string $abstract 
      *  @param mixed $concrete 
@@ -79,13 +57,11 @@ class Container implements ContainerInterface
      **/
     public function bind(string $abstract, $concrete = null): void
     {
+        if (is_null($concrete)) $concrete = $abstract;
         if (array_key_exists($abstract, $this->bindings)) {
             throw new Exception("Instance object ($abstract) sudah terdaftar.");
         }
 
-        if (is_null($concrete)) {
-            $concrete = $abstract;
-        }
         $this->bindings[$abstract] = $concrete;
     }
 
@@ -93,7 +69,7 @@ class Container implements ContainerInterface
 
     /** 
      *
-     *  Membuat instance dari class yang didaftarkan.
+     *  Membuat instance object dari class yang didaftarkan.
      *  
      *  @param string $abstract 
      *  @throws \Exception Jika instance object tidak ada.
@@ -101,12 +77,27 @@ class Container implements ContainerInterface
      **/
     public function make(string $abstract): mixed
     {
-        if (isset($this->bindings[$abstract])) {
-            $concrete = $this->bindings[$abstract];
-            return $this->resolve($concrete);
+        if (!$this->has($abstract)) {
+            throw new Exception("Instance object '$abstract' tidak terdaftar.");
         }
 
-        throw new Exception("Instance object '$abstract' tidak terdaftar.");
+        $concrete = $this->bindings[$abstract];
+        return $this->resolve($concrete);
+    }
+
+
+
+    /**
+     *
+     *  Mengecek apakah instance object terdaftar
+     *  atau tidak. 
+     *
+     *  @param string $abstract 
+     *  @return void 
+     **/
+    public function has(string $abstract): bool
+    {
+        return isset($this->bindings[$abstract]);
     }
 
 
@@ -144,4 +135,25 @@ class Container implements ContainerInterface
         
         return $reflection->newInstanceArgs($instances);
     }
+
+
+
+    /**
+     *
+     *  (singleton)
+     *
+     *  Mendapatkan instance object secara langsung 
+     *  dan memastikan object diinstance satu kali.
+     *
+     *  @return Container 
+     **/
+    public static function getInstance(): ContainerInterface
+    {
+        if (is_null(self::$instance)) {
+            self::$instance = new self;
+        }
+
+        return self::$instance;
+    }
+
 }

@@ -4,6 +4,7 @@
 namespace Kurumi\KurumiEngines;
 
 
+use Kurumi\Container\Container;
 use Kurumi\Views\View;
 
 
@@ -290,9 +291,9 @@ final class KurumiTemplate extends KurumiEngine implements KurumiEngineInterface
      **/
     public function render(string $path, array $data = []): void
     {
-        global $container;
-        $container->make(View::class)
-        ->setPath(PATH_STORAGE_PUBLIC)
-        ->render($path, $data);
+        Container::getInstance()
+            ->make(View::class)
+            ->setBasePath(PATH_STORAGE_PUBLIC)
+            ->render($path, $data);
     }
 }

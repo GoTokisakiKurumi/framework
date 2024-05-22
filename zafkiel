@@ -8,6 +8,7 @@
  **/
 
 use Kurumi\Consoles\Command;
+use Kurumi\Container\Container;
 use samejack\PHP\ArgvParser;
 
 
@@ -19,5 +20,7 @@ require_once __DIR__ . '/bootstrap/app.php';
 
 // Call command...
 $argvParser = new ArgvParser();
-$container->make(Command::class)->handleCommand($argvParser->parseConfigs());
+
+Container::getInstance()
+    ->make(Command::class)->handleCommand($argvParser->parseConfigs());
 
