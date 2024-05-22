@@ -4,7 +4,6 @@
 namespace Kurumi\KurumiEngines;
 
 
-use Kurumi\Container\Container;
 use Kurumi\Views\View;
 
 
@@ -18,6 +17,15 @@ use Kurumi\Views\View;
  **/
 final class KurumiTemplate extends KurumiEngine implements KurumiEngineInterface
 {
+
+    
+    /**
+     *
+     *  Menyimpan instance object View
+     *
+     *  @property readonly View $view 
+     **/
+    protected readonly View $view;
         
    
     /**
@@ -53,11 +61,24 @@ final class KurumiTemplate extends KurumiEngine implements KurumiEngineInterface
      *
      *  Inisialisasi property DI.
      **/
-    public function __construct()
-    {
+    public function __construct(){}
 
+
+
+    /**
+     * 
+     *  set instance object View.
+     *
+     *  @param View $view
+     *  @return void 
+     **/
+    public function setView(View $view): void
+    {
+        if (!isset($this->view)) {
+            $this->view = $view;
+        }
     }
-    
+
 
 
     /**
@@ -291,9 +312,6 @@ final class KurumiTemplate extends KurumiEngine implements KurumiEngineInterface
      **/
     public function render(string $path, array $data = []): void
     {
-        Container::getInstance()
-            ->make(View::class)
-            ->setBasePath(PATH_STORAGE_PUBLIC)
-            ->render($path, $data);
+        ($this->view)->render($path, $data);
     }
 }

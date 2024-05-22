@@ -42,7 +42,7 @@ class View extends KurumiEngine
      *  @property-read KurumiEngineInterface $kurumiDirective
      **/
     public function __construct(
-        public ?KurumiTemplate $kurumiTemplate,
+        protected readonly KurumiTemplate $kurumiTemplate,
         protected readonly KurumiDirective $kurumiDirective,
     ){}
 
@@ -101,8 +101,11 @@ class View extends KurumiEngine
             input: PATH_VIEWS,
             output: $this->basePath
         )->render($view);
-
+        
         $template = $this->kurumiTemplate;
+        $template->setView($this);
+        $template = $template;
+
         extract($data);
         include_once $viewPathStorage;
     }
