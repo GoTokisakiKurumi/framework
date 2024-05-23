@@ -26,7 +26,7 @@ class Application {
     {
         $this->registerPageErrorHandler();
         $this->registerClassBindings();
-        $this->registerFunction();
+        $this->registerHelperFunction();
     }
 
 
@@ -65,14 +65,12 @@ class Application {
     
     /**
      *
-     *  Register function.
+     *  Register helper function.
      *  
      *  @return void
      **/
-    public function registerFunction(): void
+    public function registerHelperFunction(): void
     {
-        require_once __DIR__ . "/../Utils/func/view.php";
-        require_once __DIR__ . "/../Utils/func/define.php";
-        require_once __DIR__ . "/../Utils/func/pathToDot.php";
+        require __DIR__ . "/../helpers.php";
     }
 }
