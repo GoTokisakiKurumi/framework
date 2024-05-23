@@ -8,9 +8,7 @@ use Exception;
 use Kurumi\KurumiEngines\
 { 
     KurumiEngine,
-    KurumiDirective,
     KurumiDirectiveInterface,
-    KurumiEngineInterface,
     KurumiTemplateInterface
 };
 
