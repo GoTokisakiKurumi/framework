@@ -15,7 +15,7 @@ use Kurumi\Views\View;
  *  @author Lutfi Aulia Sidik 
  *
  **/
-final class KurumiTemplate extends KurumiEngine implements KurumiEngineInterface
+final class KurumiTemplate extends KurumiEngine implements KurumiTemplateInterface
 {
 
     

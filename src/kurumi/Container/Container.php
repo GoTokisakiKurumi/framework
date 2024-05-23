@@ -1,9 +1,11 @@
 <?php
 
+
 namespace Kurumi\Container;
 
 
 use ReflectionClass;
+use ReflectionParameter;
 use Exception;
 
 
@@ -31,10 +33,9 @@ class Container implements ContainerInterface
      *  Menyimpan class yang dibindings.
      *
      *  @property array $bindings 
-     *
      **/
     private array $bindings = [];
-    
+
 
 
     /**
@@ -42,8 +43,8 @@ class Container implements ContainerInterface
      *  Mencegah object diinstance secara
      *  langsung.
      **/
-    private function __construct(){}
-    
+    private function __construct() {}
+
 
 
     /**
@@ -57,7 +58,9 @@ class Container implements ContainerInterface
      **/
     public function bind(string $abstract, $concrete = null): void
     {
-        if (is_null($concrete)) $concrete = $abstract;
+        if (is_null($concrete)) {
+            $concrete = $abstract;
+        }
         if (array_key_exists($abstract, $this->bindings)) {
             throw new Exception("Instance object ($abstract) sudah terdaftar.");
         }
@@ -93,7 +96,7 @@ class Container implements ContainerInterface
      *  atau tidak. 
      *
      *  @param string $abstract 
-     *  @return void 
+     *  @return bool 
      **/
     public function has(string $abstract): bool
     {
@@ -115,25 +118,49 @@ class Container implements ContainerInterface
     {
         $reflection = new ReflectionClass($concrete);
 
-        $constructure = $reflection->getConstructor();
+        $constructor = $reflection->getConstructor();
         
-        if(is_null($constructure)) {
+        if (is_null($constructor)) {
             return new $concrete;
         }
 
-        $getDependencies = $constructure->getParameters();
+        $dependencies = $constructor->getParameters();
+        $instances = $this->resolveDependencies($dependencies);
 
-        $instances = [];      
-        foreach ($getDependencies as $dependency) {
+        return $reflection->newInstanceArgs($instances);
+    }
+
+
+
+    /**
+     *  
+     *  Resolusi dependencies dari parameter constructor.
+     *  
+     *  @param ReflectionParameter[] $dependencies
+     *  @throws \Exception Jika dependency bukan object.
+     *  @return array 
+     **/
+    protected function resolveDependencies(array $dependencies): array
+    {
+        $results = [];
+
+        foreach ($dependencies as $dependency) {
             $dependencyClass = $dependency->getType();
-            if ($dependencyClass->isBuiltin()) {
+            
+            if ($dependencyClass === null || $dependencyClass->isBuiltin()) {
                 throw new Exception("Tidak dapat menyelesaikan dependency class: {$dependency->getName()}");
             }
             
-            $instances[] = $this->make($dependencyClass->getName());
+            $dependencyName = $dependencyClass->getName();
+
+            if ($this->has($dependencyName)) {
+                $results[] = $this->make($dependencyName);
+            } else {
+                $results[] = $this->resolve($dependencyName);
+            }
         }
-        
-        return $reflection->newInstanceArgs($instances);
+
+        return $results;
     }
 
 

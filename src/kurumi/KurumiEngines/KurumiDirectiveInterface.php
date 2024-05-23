@@ -6,11 +6,11 @@ namespace Kurumi\KurumiEngines;
 
 /**
  *
- *  interface KurumiEngineInterface 
+ *  interface KurumiDirectiveInterface 
  *
  *  @author Lutfi Aulia Sidik
  **/
-interface KurumiEngineInterface {
+interface KurumiDirectiveInterface {
 
 
 

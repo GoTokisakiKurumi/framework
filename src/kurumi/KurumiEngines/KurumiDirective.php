@@ -13,7 +13,7 @@ use Exception;
  *
  *  @author Lutfi Aulia Sidik
  **/
-final class KurumiDirective extends KurumiEngine implements KurumiEngineInterface
+final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInterface
 {
 
     

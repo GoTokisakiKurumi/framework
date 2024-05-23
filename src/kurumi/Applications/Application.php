@@ -6,10 +6,10 @@ namespace Kurumi\Applications;
 
 use Kurumi\Views\View;
 use Kurumi\Consoles\Command;
-use Kurumi\Container\Container;
 use Kurumi\KurumiEngines\KurumiTemplate;
 use Kurumi\KurumiEngines\KurumiDirective;
-
+use Kurumi\KurumiEngines\KurumiDirectiveInterface;
+use Kurumi\KurumiEngines\KurumiTemplateInterface;
 
 /**
  *
@@ -41,8 +41,8 @@ class Application {
     {
         $container = app();
         $container->bind(View::class);
-        $container->bind(KurumiTemplate::class);
-        $container->bind(KurumiDirective::class);
+        $container->bind(KurumiTemplateInterface::class, KurumiTemplate::class);
+        $container->bind(KurumiDirectiveInterface::class, KurumiDirective::class);
         $container->bind(Command::class);
     }
 
