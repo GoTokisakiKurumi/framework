@@ -25,8 +25,8 @@ class Application {
     public function __construct()
     {
         $this->registerPageErrorHandler();
-        $this->registerClassBindings();
         $this->registerHelperFunction();
+        $this->registerClassBindings();
     }
 
 
@@ -39,7 +39,7 @@ class Application {
      **/
     protected function registerClassBindings(): void
     {
-        $container = Container::getInstance();
+        $container = app();
         $container->bind(View::class);
         $container->bind(KurumiTemplate::class);
         $container->bind(KurumiDirective::class);
