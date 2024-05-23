@@ -16,7 +16,7 @@ use Kurumi\KurumiEngines\
 
 /**
  *
- *  Class View yang bertanggung jawab atas kebutuhan
+ *  Class yang bertanggung jawab atas kebutuhan
  *  menampilkan file.
  *
  *  @author Lutfi Aulia Sidik 
@@ -86,6 +86,23 @@ class View extends KurumiEngine
 
 
     /**
+     *  
+     *  Terjemahkan directive menjadi php biasa.
+     *
+     *  @param string $view
+     *  @return void 
+     **/
+    protected function compile(string $view): void
+    {
+        ($this->kurumiDirective)->setDirectory(
+            input: PATH_VIEWS,
+            output: $this->basePath
+        )->render($view);
+    }
+
+
+
+    /**
      *
      *  Proses merender file, atau menampilkan file 
      *
@@ -97,16 +114,13 @@ class View extends KurumiEngine
     {
         $viewPathStorage = $this->basePath . pathToDot($view)  . '.php';
         $this->validateViews($view);
-        $this->kurumiDirective->setDirectory(
-            input: PATH_VIEWS,
-            output: $this->basePath
-        )->render($view);
-        
+        $this->compile($view);
+
         $template = $this->kurumiTemplate;
         $template->setView($this);
         $template = $template;
 
-        extract($data);
+        extract($data, EXTR_SKIP);
         include_once $viewPathStorage;
     }
 }
