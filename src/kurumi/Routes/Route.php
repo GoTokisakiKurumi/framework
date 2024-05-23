@@ -1,17 +1,20 @@
 <?php
 
+
 namespace Kurumi\Routes;
 
-use Kurumi\Container\Container;
+
+use Closure;
 use Kurumi\Routes\RouteInterfaces;
+use Whoops\Exception\ErrorException;
 
 
 /**
  *
- *  class untuk kebutuhan routing.
+ *  class yang bertanggung jawab atas 
+ *  semua routing.
  *
  *  @author Lutfi Aulia Sidik 
- *
  **/
 class Route implements RouteInterfaces {
 
@@ -19,19 +22,27 @@ class Route implements RouteInterfaces {
     /**
      *
      *  @property array $handler 
-     *
-    **/
+     **/
     private static array $handler = [];
+
+
+    /**
+     * 
+     *  @property Closure|array $callback
+     **/
+    private static Closure|array $callback;
 
 
 
     /**
-     *
-     *  @method route get() 
+     *  
+     *  GET
+     *  
+     *  @param string $path
+     *  @param callable|array $handler
      *  @return void 
-     * 
      **/
-    public static function get(string $path, callable | array $handler): void
+    public static function get(string $path, callable|array $handler): void
     {
         self::addHandler('GET', $path, $handler);
     }
@@ -39,12 +50,14 @@ class Route implements RouteInterfaces {
 
 
     /**
-     *
-     *  @method route post() 
+     *  
+     *  POST 
+     *  
+     *  @param string $path
+     *  @param callable|array $handler 
      *  @return void 
-     * 
      **/
-    public static function post(string $path, callable $handler): void
+    public static function post(string $path, callable|array $handler): void
     {
         self::addHandler('POST', $path, $handler);
     }
@@ -52,12 +65,15 @@ class Route implements RouteInterfaces {
 
 
     /**
-     *
-     *  @method route addHandler() 
+     *  
+     *  Menambahkan route handler.
+     *  
+     *  @param string $method
+     *  @param string $path 
+     *  @param string $handler
      *  @return void 
-     * 
      **/
-    private static function addHandler(string $method, string $path, $handler): void
+    protected static function addHandler(string $method, string $path, $handler): void
     {
         self::$handler[$method . $path] = [
             'path' => $path,
@@ -70,47 +86,50 @@ class Route implements RouteInterfaces {
     
     /**
      *
-     *  @method route run() 
-     *
-     *  untuk menjalankan route yang sudah ditentukan.
+     *  Untuk menjalankan route yang sudah ditentukan.
      *
      *  @return void 
-     * 
      **/
     public static function run(): void
     {
+        $container  = app();
         $requestUri = parse_url($_SERVER["REQUEST_URI"]);
         $requestPath = $requestUri["path"];
         $requestMethod = $_SERVER["REQUEST_METHOD"];
 
-        $callback = null;
 
-        foreach(self::$handler as $handler)
-        {
-            if ($handler['path'] === $requestPath AND $requestMethod === $handler["method"])
-            {
-                $callback = $handler["handler"];
+        foreach(self::$handler as $handler) {
+            if ($handler['path'] === $requestPath AND $requestMethod === $handler["method"]) {
+                self::$callback = $handler["handler"];
             }
         }
 
-        if (!$callback) {
+
+        if (!isset(self::$callback)) {
             header("HTTP/1.0 404 Not Found");
             return;
         }
 
-        if (is_array($callback)) {
-            $container = Container::getInstance();
-            $container->bind($callback[0]);
-            $controller = $container->make($callback[0]);
-            $method = $callback[1];
 
-            call_user_func_array([$controller, $method], [
-                array_merge($_POST, $_GET)
-            ]);
-        } else {
-            echo call_user_func_array($callback, [
-                array_merge($_GET, $_POST)
-            ]);
+        if (is_array(self::$callback)) {
+
+            [$namespace, $methodController] = self::$callback;
+            
+            $container->bind($namespace);
+            $controller = $container->make($namespace);
+
+            if (!method_exists($controller, $methodController)) {
+                throw new ErrorException("Ara Ara sepertinya method ini $namespace::$methodController tidak tersedia.");
+            }
+
+            self::$callback = [
+                $controller,
+                $methodController
+            ];
         }
+
+        echo call_user_func_array(self::$callback, [
+            array_merge($_GET, $_POST)
+        ]);
     }
 }
