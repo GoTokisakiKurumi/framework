@@ -96,7 +96,7 @@ class View extends KurumiEngine
         ($this->kurumiDirective)->setDirectory(
             input: PATH_VIEWS,
             output: $this->basePath
-        )->render($view);
+        )->compile($view);
     }
 
 

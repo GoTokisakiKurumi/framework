@@ -19,6 +19,6 @@ interface KurumiDirectiveInterface {
      *  @param string $path
      *  @return void
      **/ 
-    public function render(string $path): void;
+    public function compile(string $path): void;
 
 }

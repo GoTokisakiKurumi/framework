@@ -202,7 +202,7 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
      *  @param string $path 
      *  @return void 
      **/
-    public function render(string $path): void
+    public function compile(string $path): void
     {
         $this->validateDirectory();
 
