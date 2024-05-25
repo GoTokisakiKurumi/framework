@@ -69,8 +69,32 @@ if (!function_exists('pathToDot'))
 
 
 
+if (!function_exists('isFileUpdate'))
+{
+
+    /**
+     *
+     *  Cek apakah sebuah file ada perubahan
+     *  berdasarkan waktu terakhir diupdate. 
+     *
+     *  @param string $input 
+     *  @param array  $output 
+     *  @return bool
+     **/
+    function isFileUpdate(string $input, string $output): bool
+    {
+        return app('filesystem')->isFileUpdate(
+            input: $input,
+            output: $output
+        );
+    } 
+}
+
+
+
 if (!function_exists('view'))
 {
+ 
     /**
      *
      *  Tampilkan kontent untuk ditampilkan.

@@ -199,16 +199,26 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
      *  Render, Generate file baru dengan hasil
      *  convert directive.
      *
-     *  @param string $path 
+     *  @param string $view 
      *  @return void 
      **/
-    public function compile(string $path): void
+    public function compile(string $view): void
     {
         $this->validateDirectory();
 
-        $fileContent   = $this->getFileContent($path);
+        $fileContent   = $this->getFileContent($view);
         $resultContent = $this->processesDirectives($fileContent);
+        $pathFileInput = $this->directoryInput . $view . parent::DEFAULT_FILE_EXTENSION;
+        $pathGenerateOutput = $this->directoryOutput . pathToDot($view) . '.php';
+        
 
-        file_put_contents($this->directoryOutput . pathToDot($path) . '.php', $resultContent);
+        // saat pertamakali compile dijalankan,
+        // selanjutnya compile akan dijalankan jika
+        // terdapat perubahan difile input saja.
+        if (!file_exists($pathGenerateOutput)) {
+            file_put_contents($pathGenerateOutput, $resultContent); 
+        } elseif (isFileUpdate($pathFileInput, $pathGenerateOutput)) {
+            file_put_contents($pathGenerateOutput, $resultContent); 
+        }
     }
 }

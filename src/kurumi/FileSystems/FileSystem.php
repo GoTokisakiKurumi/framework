@@ -32,6 +32,29 @@ class FileSystem {
 
     /**
      * 
+     *  Cek apakah sebuah file ada perubahan
+     *  berdasarkan waktu terakhir diupdate. 
+     *
+     *  @param string $input
+     *  @param string $output
+     *  @return bool 
+     **/
+    public function isFileUpdate(string $input, string $output)
+    {
+        if ($this->isFile($input)) {
+            $fileTimeInput  = filemtime($input);
+            $fileTimeOutput = @filemtime($output) ?? 0;
+
+            return $fileTimeInput >= $fileTimeOutput;
+        }
+
+        throw new ErrorException("File tidak ditemukan ($input).");
+    }
+
+
+
+    /**
+     * 
      *  Require  
      *
      *  @param string $path 

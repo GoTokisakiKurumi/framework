@@ -130,7 +130,7 @@ class View extends KurumiEngine
 
         $this->validateViews($view);
         $this->compile($view);
-    
+
         $data = array_merge([
             "template" => $this->template(),
             "view" => $view
