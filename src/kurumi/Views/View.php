@@ -132,8 +132,8 @@ class View extends KurumiEngine
         $this->compile($view);
 
         $data = array_merge([
-            "template" => $this->template(),
-            "view" => $view
+            "__temp" => $this->template(),
+            "__view" => $view
         ], $data);
 
         app('filesystem')->require($viewPathStorage, $data);
