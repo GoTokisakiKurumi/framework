@@ -6,10 +6,13 @@ namespace Kurumi\Applications;
 
 use Kurumi\Views\View;
 use Kurumi\Consoles\Command;
+use Kurumi\Container\ContainerInterface;
+use Kurumi\FileSystems\FileSystem;
 use Kurumi\KurumiEngines\KurumiTemplate;
 use Kurumi\KurumiEngines\KurumiDirective;
 use Kurumi\KurumiEngines\KurumiDirectiveInterface;
 use Kurumi\KurumiEngines\KurumiTemplateInterface;
+
 
 /**
  *
@@ -22,11 +25,14 @@ class Application {
 
 
     
-    public function __construct()
+    public function __construct(
+        protected ContainerInterface $container
+    )
     {
-        $this->registerPageErrorHandler();
-        $this->registerHelperFunction();
         $this->registerClassBindings();
+        $this->registerClassSupports();
+        $this->registerHelperFunction();
+        $this->registerPageErrorHandler();
     }
 
 
@@ -39,11 +45,23 @@ class Application {
      **/
     protected function registerClassBindings(): void
     {
-        $container = app();
-        $container->bind(View::class);
-        $container->bind(KurumiTemplateInterface::class, KurumiTemplate::class);
-        $container->bind(KurumiDirectiveInterface::class, KurumiDirective::class);
-        $container->bind(Command::class);
+        $this->container->bind(View::class);
+        $this->container->bind(KurumiTemplateInterface::class, KurumiTemplate::class);
+        $this->container->bind(KurumiDirectiveInterface::class, KurumiDirective::class);
+    }
+
+
+
+    /**
+     * 
+     *  Register class pendukung.
+     *
+     *  @return void 
+     **/
+     protected function registerClassSupports(): void
+    {
+        $this->container->bind('command', Command::class);
+        $this->container->bind('filesystem', FileSystem::class);
     }
 
 

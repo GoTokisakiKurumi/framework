@@ -4,7 +4,7 @@
 namespace Kurumi\Views;
 
 
-use Exception;
+use Whoops\Exception\ErrorException;
 use Kurumi\KurumiEngines\
 { 
     KurumiEngine,
@@ -76,9 +76,9 @@ class View extends KurumiEngine
     {
         $pathSourceViews = PATH_VIEWS . $view . parent::DEFAULT_FILE_EXTENSION;
         if (file_exists(str_replace('.kurumi.php', '.php', $pathSourceViews))) {
-            throw new Exception("($view.php) Sepertinya kamu melupakan namaku?");
+            throw new ErrorException("($view.php) Sepertinya kamu melupakan namaku?");
         } elseif (!file_exists($pathSourceViews)) {
-            throw new Exception("Tampaknya file ($view) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
+            throw new ErrorException("Tampaknya file ($view) tidak dapat ditemukan. Seperti hatiku yang kehilangan dia :)");
         }
     }
 
@@ -91,12 +91,27 @@ class View extends KurumiEngine
      *  @param string $view
      *  @return void 
      **/
-    protected function compile(string $view): void
+    public function compile(string $view): void
     {
         ($this->kurumiDirective)->setDirectory(
             input: PATH_VIEWS,
             output: $this->basePath
         )->compile($view);
+    }
+
+
+
+    /**
+     *  
+     *  Mengembalikan instace object kurumiTemplate.
+     *
+     *  @return KurumiTemplateInterface 
+     **/
+    public function template(): KurumiTemplateInterface
+    {
+        $template = $this->kurumiTemplate;
+        $template->setView($this);
+        return $template;
     }
 
 
@@ -109,17 +124,18 @@ class View extends KurumiEngine
      *  @param array  $data
      *  @return void 
      **/
-    public function render(string $view, array $data = []): void
+    public function render(string $view, array $data = [])
     {
         $viewPathStorage = $this->basePath . pathToDot($view)  . '.php';
+
         $this->validateViews($view);
         $this->compile($view);
+    
+        $data = array_merge([
+            "template" => $this->template(),
+            "view" => $view
+        ], $data);
 
-        $template = $this->kurumiTemplate;
-        $template->setView($this);
-        $template = $template;
-
-        extract($data, EXTR_SKIP);
-        include_once $viewPathStorage;
+        app('filesystem')->require($viewPathStorage, $data);
     }
 }

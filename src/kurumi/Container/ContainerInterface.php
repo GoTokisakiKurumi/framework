@@ -14,11 +14,12 @@ interface ContainerInterface {
     /**
      *
      *  @param string $abstract
-     *  @param mixed $concrete 
+     *  @param string|null $concrete 
      *  @return void 
      **/
-    public function bind(string $abstract, mixed $concrete): void;
+    public function bind(string $abstract, $concrete = null): void;
 
+ 
     /**
      *
      *  @param string $abstract
