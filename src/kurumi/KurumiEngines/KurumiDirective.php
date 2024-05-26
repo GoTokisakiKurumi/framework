@@ -16,7 +16,9 @@ use Exception;
 final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInterface
 {
 
-    
+    use Traits\CompilerLayouts;
+
+
     /**
      * 
      *  Menyimpan directory input.
@@ -44,6 +46,13 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
     protected array $directive = [];
 
 
+    /**
+     *
+     * 
+     **/
+    protected array $footer = [];
+
+
 
     /**
      *  
@@ -54,6 +63,7 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
     public function __construct()
     {
         $this->addDefaultDirectives();
+        $this->compiledKurumiExtends();
     }
 
 
@@ -167,7 +177,7 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
             '/@kurumiContent\s*\((.*)\)\s*/' => '<?php $__temp->content($1) ?>',
             '/@kurumiInclude\s*\((.*)\)\s*/' =>'<?php $__temp->includeFile($1) ?>',
             '/@kurumiImport\s*\((.*)\)\s*/' =>'<?php $__temp->importFile($__view, $1) ?>',
-            '/@oppai\s*\((.*)\)\s*/' => '<?php var_dump($1); ?>',
+            '/@oppai\s*\((.*)\)\s*/' => '<?php oppai($1); ?>',
             '/^\s*[\r\n]+/m' => '',
             //'/[\r\n]+/' => ''
         ]);
@@ -190,6 +200,22 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
         }
 
         return $content;
+    }
+
+
+
+    /**
+     *
+     * 
+     *
+     **/
+    protected function compiledKurumiExtends()
+    {
+        preg_replace(
+            pattern: '/@kurumiExtends\s*\((.*)\)\s*/',
+            replacement: $this->compileKurumiExtends(),
+            subject: ''
+        );
     }
 
 

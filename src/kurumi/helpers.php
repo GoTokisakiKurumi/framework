@@ -14,7 +14,6 @@ use Kurumi\Container\Container;
 use Kurumi\Views\View;
 
 
-
 define('PATH_PUBLIC', '../public/');
 define('PATH_RESOURCES', '../resources/');
 define('PATH_VIEWS', '../resources/views/');
@@ -88,6 +87,20 @@ if (!function_exists('isFileUpdate'))
             output: $output
         );
     } 
+}
+
+
+
+if (!function_exists('oppai'))
+{
+    function oppai(...$args)
+    { 
+        foreach ($args as $x) {
+            (new Kurumi\Debug\CustomDumper)->dump($x);
+        }
+
+        die(1);
+    }
 }
 
 
