@@ -29,10 +29,10 @@ class Application {
         protected ContainerInterface $container
     )
     {
+        $this->registerPageErrorHandler();
         $this->registerClassBindings();
         $this->registerClassSupports();
         $this->registerHelperFunction();
-        $this->registerPageErrorHandler();
     }
 
 
