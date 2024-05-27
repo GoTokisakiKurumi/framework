@@ -16,7 +16,12 @@ use Exception;
 final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInterface
 {
 
-    use Traits\CompilerLayouts;
+    use Traits\CompilesLayouts,
+        Traits\CompilesIncludes,
+        Traits\CompilesRawPhp,
+        Traits\CompilesLoops,
+        Traits\CompilesFunctions,
+        Traits\CompilesEchos;
 
 
     /**
@@ -39,32 +44,40 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
 
     /**
      *  
-     *  Menyimpan $directive.
+     *  Menyimpan directive yang akan 
+     *  selalu dibawah.
      *
-     *  @property array $directive
+     *  @property array $footer
      **/
-    protected array $directive = [];
+    protected array $footer = [];
 
 
     /**
+     *  
+     *  Menyimpan content file yang sudah
+     *  dicompile.
      *
-     * 
+     *  @property string $content
      **/
-    protected array $footer = [];
+    protected string $content = "";
+
+
+    /**
+     *  
+     *  Menyimpan jalur file yang akan
+     *  dicompile.
+     *  
+     *  @property string $pathView
+     **/
+    protected string $pathView = "";
 
 
 
     /**
      *  
-     *  Jalankan method yang perlu dijalankan saat 
-     *  pertamakali class dipanggil.
      *
      **/
-    public function __construct()
-    {
-        $this->addDefaultDirectives();
-        $this->compiledKurumiExtends();
-    }
+    public function __construct(){}
 
 
     
@@ -88,8 +101,7 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
 
     /**
      *  
-     *  Load file yang akan digenerate dan 
-     *  kembalikan hasilnya.
+     *  Dapatkan content files.
      *  
      *  @param string $path
      *  @return string 
@@ -106,7 +118,7 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
     /**
      *
      *  Validasi folder input dan output jika 
-     *  folder output tidak ditemukan maka buat
+     *  folder output tidak ditemukan maka buat.
      *
      *  @throw \Exception jika folder input tidak ditemukan.
      *  @throw \Exception jika folder output tidak ditemukan.
@@ -127,75 +139,26 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
 
     /**
      * 
-     *  Menambahkan directive baru.
      *
-     *  @param string $pattern
-     *  @param string $replacement
-     *  @return void 
-     **/
-    public function addDirective(string $pattern, string $replacement): void
-    {
-        $this->directive[$pattern] = $replacement;
-    }
-
-
- 
-    /**
-     * 
-     *  Menambahkan directive baru dengan array.
      *
-     *  @param array $directives
-     *  @return void
      **/
-    public function addDirectiveAll(array $directives): void
+    private function toPhpValid(string $content): string
     {
-        if(!is_null($directives) and sizeof($directives) > 0) {
-            foreach($directives as $pattern => $replacement) {
-                $this->directive[$pattern] = $replacement;
-            }
-        }
-    }
+        foreach (
+        [
+            $this->compilesEchos() => '/{{\s*(.*?)\s*}}/',
+            $this->compilesEcho() => '/{!\s*(.*?)\s*!}/',
+            $this->compilesForeach() => '/@kurumiforeach\s*\((.*?)\)(.*?)\s*@endkurumiforeach/s',
+            $this->compilesKurumiPhp() => '/@kurumiphp\s*(.*?)\s*@endkurumiphp/s',
+            $this->compilesKurumiSection() => '/@kurumiSection\s*\((.*?)\)(.*?)\s*@endkurumisection/s',
+            $this->compilesKurumiSingleSection() =>'/@kurumiSection\s*\((.*)\)\s*/',
+            $this->compilesKurumiContent() => '/@kurumiContent\s*\((.*)\)\s*/',
+            $this->compilesKurumiInclude() => '/@kurumiInclude\s*\((.*)\)\s*/',
+            $this->compilesKurumiImport() => '/@kurumiImport\s*\((.*)\)\s*/',
+            $this->compilesOppai() => '/@oppai\s*\((.*)\)\s*/'
 
+        ] as $replacement => $pattern) {
 
-
-    /**
-     *  
-     *  Tambahkan default directive 
-     *  @return void 
-     **/
-    private function addDefaultDirectives(): void
-    {
-
-        $this->addDirectiveAll([
-            '/{{\s*(.*?)\s*}}/' =>'<?php echo htmlspecialchars($1) ?>',
-            '/{!\s*(.*?)\s*!}/' =>'<?php echo $1 ?>',
-            '/@kurumiforeach\s*\((.*?)\)(.*?)\s*@endkurumiforeach/s' => '<?php foreach($1): ?>$2<?php endforeach; ?>',
-            '/@kurumiphp\s*(.*?)\s*@endkurumiphp/s' => '<?php $1 ?>',
-            '/@kurumiExtends\s*\((.*)\)\s*/' => '<?php $__temp->extendContent($1) ?>',
-            '/@kurumiSection\s*\((.*?)\)(.*?)\s*@endkurumisection/s' => '<?php $__temp->startContent($1) ?>$2<?php $__temp->stopContent(); ?>',
-            '/@kurumiSection\s*\((.*)\)\s*/' =>'<?php $__temp->startContent($1) ?>',
-            '/@kurumiContent\s*\((.*)\)\s*/' => '<?php $__temp->content($1) ?>',
-            '/@kurumiInclude\s*\((.*)\)\s*/' =>'<?php $__temp->includeFile($1) ?>',
-            '/@kurumiImport\s*\((.*)\)\s*/' =>'<?php $__temp->importFile($__view, $1) ?>',
-            '/@oppai\s*\((.*)\)\s*/' => '<?php oppai($1); ?>',
-            '/^\s*[\r\n]+/m' => '',
-            //'/[\r\n]+/' => ''
-        ]);
-    }
-
-
-
-    /**
-     * 
-     *  Mengubah syntax directive menjadi syntax php biasa,
-     *  dan kembalikan hasilnya.
-     * 
-     *  @param string $content 
-     *  @return string 
-     **/
-    private function processesDirectives(string $content): string
-    {
-        foreach ($this->directive as $pattern => $replacement) {
             $content = preg_replace($pattern, $replacement, $content);
         }
 
@@ -205,17 +168,85 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
 
 
     /**
+     *  
+     *  Compile directive kurumiExtends dipaling
+     *  bawah dari sebuah content files.
      *
-     * 
-     *
+     *  @return void 
      **/
-    protected function compiledKurumiExtends()
+    protected function compilerKurumiExtends(): void
+    {   
+        $pattern = '/@kurumiExtends\s*\((.*)\)\s*/';
+        preg_match($pattern, $this->content, $matches);
+
+        if (isset($matches[1])) {
+            $content = preg_replace(
+                pattern: $pattern,
+                replacement: $this->compilesKurumiExtends(@$matches[1]),
+                subject: $this->content
+            );
+
+            $this->content = $this->addFooters($content);
+        }
+    }
+
+
+
+    /**
+     *
+     *  Tambahkan footer kedalam content file.
+     *
+     *  @param string $content
+     *  @return string 
+     **/
+    protected function addFooters(string $content): string
     {
-        preg_replace(
-            pattern: '/@kurumiExtends\s*\((.*)\)\s*/',
-            replacement: $this->compileKurumiExtends(),
-            subject: ''
-        );
+        return $content . implode("\n", $this->footer);
+    }
+
+
+
+    /**
+     *
+     *  Set content file dan kembalikan 
+     *  object ini.
+     *
+     *  @param string $path
+     *  @return KurumiDirectiveInterface 
+     **/
+    public function files(string $path): KurumiDirectiveInterface
+    {
+        $this->content  = $this->getFileContent($path);
+        $this->pathView = $path;
+        return $this;
+    }
+
+
+
+    /**
+     * 
+     *  Dapatkan path input lengkap.
+     *
+     *  @return string
+     **/
+    public function getPathInput(): string
+    {
+        $path = $this->directoryInput . $this->pathView . parent::DEFAULT_FILE_EXTENSION;
+        return $path;
+    }
+
+
+
+    /**
+     * 
+     *  Dapatkan path output lengkap.
+     *
+     *  @return string
+     **/
+    public function getPathOutput(): string
+    {
+        $path = $this->directoryOutput . pathToDot($this->pathView) . '.php';
+        return $path;
     }
 
 
@@ -228,23 +259,24 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
      *  @param string $view 
      *  @return void 
      **/
-    public function compile(string $view): void
+    public function compile(): void
     {
         $this->validateDirectory();
 
-        $fileContent   = $this->getFileContent($view);
-        $resultContent = $this->processesDirectives($fileContent);
-        $pathFileInput = $this->directoryInput . $view . parent::DEFAULT_FILE_EXTENSION;
-        $pathGenerateOutput = $this->directoryOutput . pathToDot($view) . '.php';
-        
+        $this->compilerKurumiExtends();
 
+        $pathOutput   = $this->getPathOutput();
+        $pathInput    = $this->getPathInput();
+        $finalContent = $this->toPhpValid($this->content);
+
+        
         // saat pertamakali compile dijalankan,
         // selanjutnya compile akan dijalankan jika
-        // terdapat perubahan difile input saja.
-        if (!file_exists($pathGenerateOutput)) {
-            file_put_contents($pathGenerateOutput, $resultContent); 
-        } elseif (isFileUpdate($pathFileInput, $pathGenerateOutput)) {
-            file_put_contents($pathGenerateOutput, $resultContent); 
+        // terdapat perubahan difile input.
+        if (!file_exists($pathOutput)) {
+            file_put_contents($pathOutput, $finalContent); 
+        } elseif (isFileUpdate($pathInput, $pathOutput)) {
+            file_put_contents($pathOutput, $finalContent); 
         }
     }
 }

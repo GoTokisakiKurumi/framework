@@ -93,10 +93,15 @@ class View extends KurumiEngine
      **/
     public function compile(string $view): void
     {
-        ($this->kurumiDirective)->setDirectory(
-            input: PATH_VIEWS,
-            output: $this->basePath
-        )->compile($view);
+        $directive = $this->kurumiDirective;
+        $directive->setDirectory(input: PATH_VIEWS, output: $this->basePath);
+        $directive->files($view);
+        $directive->compile();
+    
+    //     ($this->kurumiDirective)->setDirectory(
+    //         input: PATH_VIEWS,
+    //         output: $this->basePath
+    //     )->file($view)->compile($view);
     }
 
 
