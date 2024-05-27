@@ -4,6 +4,9 @@
 namespace Kurumi\KurumiEngines;
 
 
+use Kurumi\Views\View;
+
+
 /**
  *
  *  interface KurumiTemplateInterface 
@@ -11,6 +14,17 @@ namespace Kurumi\KurumiEngines;
  *  @author Lutfi Aulia Sidik
  **/
 interface KurumiTemplateInterface {
+
+
+
+    /**
+     * 
+     *  set instance object View.
+     *
+     *  @param View $view
+     *  @return void 
+     **/
+    public function setView(View $view): void;
 
 
 
