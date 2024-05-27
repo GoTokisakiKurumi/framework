@@ -37,6 +37,15 @@ class Container implements ContainerInterface
     private array $bindings = [];
 
 
+    /**
+     * 
+     *  Menyimpan data yang dishared.
+     *
+     *  @property array $shared 
+     **/
+    protected array $shared = [];
+
+
 
     /**
      *  
@@ -49,7 +58,7 @@ class Container implements ContainerInterface
 
     /**
      *
-     *  Binding class kedalam container.
+     *  Bindings class kedalam container.
      *
      *  @param string $abstract 
      *  @param mixed $concrete 
@@ -91,16 +100,57 @@ class Container implements ContainerInterface
 
 
     /**
+     * 
+     *  Bind selain class kedalam container.
+     * 
+     *  @param string $abstract
+     *  @param mixed $concrete
+     *  @return void 
+     **/
+    public function shared(string $key, mixed $value): void
+    {
+        $this->shared[$key] = $value;
+    }
+
+
+
+    /**
      *
-     *  Mengecek apakah instance object terdaftar
-     *  atau tidak. 
+     *  Dapatkan bind atau shared.
+     *
+     *  @param string $abstract
+     *  @throws \Exception jika bindings tidak tersedia
+     *  @return mixed
+     **/
+    public function get(string $abstract, bool $isShared = true): mixed
+    {
+        if ($isShared === true && $this->has($abstract, true)) {
+            return $this->shared[$abstract];
+        } elseif ($isShared === false && $this->has($abstract)) {
+            return $this->bindings[$abstract];
+        } else {
+            throw new Exception("($abstract) tidak tersedia didalam container.");
+        }
+    }
+
+
+
+    /**
+     *
+     *  Cek apakah instance object atau shared
+     *  terdaftar atau tidak. 
      *
      *  @param string $abstract 
+     *  @param bool|false $isShared 
      *  @return bool 
      **/
-    public function has(string $abstract): bool
+    public function has(string $abstract, bool $isShared = false): bool
     {
-        return isset($this->bindings[$abstract]);
+        if (!$isShared) {
+            return isset($this->bindings[$abstract]);
+        } else {
+            return isset($this->shared[$abstract]);
+        }
     }
 
 
