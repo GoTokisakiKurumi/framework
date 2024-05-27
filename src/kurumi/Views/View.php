@@ -118,6 +118,20 @@ class View extends KurumiEngine
 
     /**
      *
+     *  Dapatkan path storage.
+     *  
+     *  @param string $view 
+     *  @return string 
+     **/
+    public function getPathStorage(string $view): string
+    {
+        return $this->basePath . pathToDot($view) . '.php';
+    }
+
+
+
+    /**
+     *
      *  Proses merender file, atau menampilkan file 
      *
      *  @param string $view 
@@ -126,8 +140,6 @@ class View extends KurumiEngine
      **/
     public function render(string $view, array $data = [])
     {
-        $viewPathStorage = $this->basePath . pathToDot($view)  . '.php';
-
         $this->validateViews($view);
         $this->compile($view);
 
@@ -136,6 +148,6 @@ class View extends KurumiEngine
             "__view" => $view
         ], $data);
 
-        app('filesystem')->require($viewPathStorage, $data);
+        app('filesystem')->require($this->getPathStorage($view), $data);
     }
 }
