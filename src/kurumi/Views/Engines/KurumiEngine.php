@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Kurumi\KurumiEngines;
+namespace Kurumi\Views\Engines;
 
 
 use Exception;

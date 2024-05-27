@@ -8,10 +8,10 @@ use Kurumi\Views\View;
 use Kurumi\Consoles\Command;
 use Kurumi\Container\ContainerInterface;
 use Kurumi\FileSystems\FileSystem;
-use Kurumi\KurumiEngines\KurumiTemplate;
-use Kurumi\KurumiEngines\KurumiDirective;
-use Kurumi\KurumiEngines\KurumiDirectiveInterface;
-use Kurumi\KurumiEngines\KurumiTemplateInterface;
+use Kurumi\Views\KurumiTemplate;
+use Kurumi\Views\KurumiTemplateInterface;
+use Kurumi\Views\Compilers\KurumiCompiler;
+use Kurumi\Views\Compilers\KurumiCompilerInterface;
 
 
 /**
@@ -49,7 +49,7 @@ class Application {
     {
         $this->container->bind(View::class);
         $this->container->bind(KurumiTemplateInterface::class, KurumiTemplate::class);
-        $this->container->bind(KurumiDirectiveInterface::class, KurumiDirective::class);
+        $this->container->bind(KurumiCompilerInterface::class, KurumiCompiler::class);
     }
 
 

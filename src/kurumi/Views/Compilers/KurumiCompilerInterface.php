@@ -1,16 +1,16 @@
 <?php
 
 
-namespace Kurumi\KurumiEngines;
+namespace Kurumi\Views\Compilers;
 
 
 /**
  *
- *  interface KurumiDirectiveInterface 
+ *  interface KurumiCompilerInterface 
  *
  *  @author Lutfi Aulia Sidik
  **/
-interface KurumiDirectiveInterface {
+interface KurumiCompilerInterface {
 
 
 
@@ -32,9 +32,9 @@ interface KurumiDirectiveInterface {
      *  object ini.
      *
      *  @param string $path
-     *  @return KurumiDirectiveInterface 
+     *  @return KurumiCompilerInterface 
      **/
-    public function files(string $path): KurumiDirectiveInterface;
+    public function files(string $path): KurumiCompiler;
 
 
 

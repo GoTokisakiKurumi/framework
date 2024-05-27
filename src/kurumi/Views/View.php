@@ -5,12 +5,9 @@ namespace Kurumi\Views;
 
 
 use Whoops\Exception\ErrorException;
-use Kurumi\KurumiEngines\
-{ 
-    KurumiEngine,
-    KurumiDirectiveInterface,
-    KurumiTemplateInterface
-};
+use Kurumi\Views\Engines\KurumiEngine;
+use Kurumi\Views\KurumiTemplateInterface;
+use Kurumi\Views\Compilers\KurumiCompilerInterface;
 
 
 /**
@@ -37,12 +34,12 @@ class View extends KurumiEngine
      *
      *  Menginisialisasi property 
      *
-     *  @property-read KurumiTemplateInterface  $kurumiTemplate 
-     *  @property-read KurumiDirectiveInterface $kurumiDirective
+     *  @property-read KurumiTemplateInterface $kurumiTemplate 
+     *  @property-read KurumiCompilerInterface $kurumiConpiler
      **/
     public function __construct(
-        protected readonly KurumiTemplateInterface  $kurumiTemplate,
-        protected readonly KurumiDirectiveInterface $kurumiDirective,
+        protected readonly KurumiTemplateInterface $kurumiTemplate,
+        protected readonly KurumiCompilerInterface $kurumiCompiler,
     ){}
 
 
@@ -93,10 +90,10 @@ class View extends KurumiEngine
      **/
     public function compile(string $view): void
     {
-        $directive = $this->kurumiDirective;
-        $directive->setDirectory(input: PATH_VIEWS, output: $this->basePath);
-        $directive->files($view);
-        $directive->compile();
+        $compiler = $this->kurumiCompiler;
+        $compiler->setDirectory(input: PATH_VIEWS, output: $this->basePath);
+        $compiler->files($view);
+        $compiler->compile();
     }
 
 

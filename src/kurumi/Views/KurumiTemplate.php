@@ -1,11 +1,11 @@
 <?php
 
 
-namespace Kurumi\KurumiEngines;
+namespace Kurumi\Views;
 
 
 use Kurumi\Views\View;
-
+use Kurumi\Views\Engines\KurumiEngine;
 
 /**
  *

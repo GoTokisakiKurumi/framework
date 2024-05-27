@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Kurumi\KurumiEngines\Traits;
+namespace Kurumi\Views\Compilers\Traits;
 
 
 /**

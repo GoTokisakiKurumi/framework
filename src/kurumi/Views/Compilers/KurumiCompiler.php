@@ -1,19 +1,20 @@
 <?php
 
-namespace Kurumi\KurumiEngines;
+namespace Kurumi\Views\Compilers;
 
 
 use Exception;
+use Kurumi\Views\Engines\KurumiEngine;
 
 
 /**
  *
- *  Class KurumiDirective yang bertanggung jawab 
- *  atas semua hal yang mengenai directive.
+ *  Class KurumiCompiler yang bertanggung jawab 
+ *  atas semua hal yang mengenai compiler.
  *
  *  @author Lutfi Aulia Sidik
  **/
-final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInterface
+final class KurumiCompiler extends KurumiEngine implements KurumiCompilerInterface
 {
 
     use Traits\CompilesLayouts,
@@ -139,8 +140,10 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
 
     /**
      * 
+     *  Compile directive menjadi php valid.
      *
-     *
+     *  @param string $content
+     *  @return string
      **/
     private function toPhpValid(string $content): string
     {
@@ -214,7 +217,7 @@ final class KurumiDirective extends KurumiEngine implements KurumiDirectiveInter
      *  @param string $path
      *  @return KurumiDirectiveInterface 
      **/
-    public function files(string $path): KurumiDirectiveInterface
+    public function files(string $path): KurumiCompiler
     {
         $this->content  = $this->getFileContent($path);
         $this->pathView = $path;
