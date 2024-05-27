@@ -87,13 +87,13 @@ final class KurumiTemplate extends KurumiEngine implements KurumiTemplateInterfa
      *  yang sesuai dengan param $name 
      *
      *  @param string $name 
-     *  @return void 
+     *  @return string  
      **/
-    public function content(string $name): void
+    public function content(string $name): string
     {
         if (array_key_exists($name, self::$nameContents)) {
             if (self::$nameContents[$name] === $name) {
-                echo self::$contents[$name];
+                return self::$contents[$name];
             } 
         }
     }

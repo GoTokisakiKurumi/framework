@@ -39,7 +39,7 @@ trait compilesLayouts {
      **/
     public function compilesKurumiContent(): string 
     {
-        return '<?php $__temp->content($1) ?>';
+        return '<?php echo $__temp->content($1) ?>';
     }
 
 
