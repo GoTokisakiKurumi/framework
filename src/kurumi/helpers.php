@@ -11,6 +11,7 @@
 
 
 use Kurumi\Container\Container;
+use Kurumi\Views\Factory;
 use Kurumi\Views\View;
 
 
@@ -105,6 +106,27 @@ if (!function_exists('oppai'))
 
 
 
+// if (!function_exists('view'))
+// {
+//  
+//     /**
+//      *
+//      *  Tampilkan kontent untuk ditampilkan.
+//      *
+//      *  @param string $view 
+//      *  @param array  $data 
+//      *  @return void 
+//      **/
+//     function view(string $view, array $data = [])
+//     {
+//         app(View::class)
+//             ->setBasePath(PATH_STORAGE_PUBLIC)
+//             ->render($view, $data);
+//     } 
+// }
+
+
+
 if (!function_exists('view'))
 {
  
@@ -118,8 +140,11 @@ if (!function_exists('view'))
      **/
     function view(string $view, array $data = [])
     {
-        app(View::class)
-            ->setBasePath(PATH_STORAGE_PUBLIC)
-            ->render($view, $data);
+        // app(View::class)
+        //     ->setBasePath(PATH_STORAGE_PUBLIC)
+        //     ->render($view, $data);
+        $factory = app(Factory::class);
+
+        $factory->make($view, $data);
     } 
 }

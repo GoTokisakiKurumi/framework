@@ -14,7 +14,7 @@ use Kurumi\Views\Engines\KurumiEngine;
  *
  *  @author Lutfi Aulia Sidik
  **/
-final class KurumiCompiler extends KurumiEngine implements KurumiCompilerInterface
+final class KurumiCompiler extends KurumiEngine implements CompilerInterface
 {
 
     use Traits\CompilesLayouts,
@@ -31,16 +31,7 @@ final class KurumiCompiler extends KurumiEngine implements KurumiCompilerInterfa
      *
      *  @property string $directoryInput
      **/
-    private string $directoryInput = "";
-
-    
-    /**
-     * 
-     *  Menyimpan directory output.
-     *
-     *  @property string $directoryOutput
-     **/
-    private string $directoryOutput = "";
+    private string $pathInput = "";
 
 
     /**
@@ -50,27 +41,7 @@ final class KurumiCompiler extends KurumiEngine implements KurumiCompilerInterfa
      *
      *  @property array $footer
      **/
-    protected array $footer = [];
-
-
-    /**
-     *  
-     *  Menyimpan content file yang sudah
-     *  dicompile.
-     *
-     *  @property string $content
-     **/
-    protected string $content = "";
-
-
-    /**
-     *  
-     *  Menyimpan jalur file yang akan
-     *  dicompile.
-     *  
-     *  @property string $pathView
-     **/
-    protected string $pathView = "";
+    private array $footer = [];
 
 
 
@@ -81,81 +52,76 @@ final class KurumiCompiler extends KurumiEngine implements KurumiCompilerInterfa
     public function __construct(){}
 
 
-    
+
     /**
      * 
-     *  Set directory input dan output.
+     *  Compile kurumi template.
      *
-     *  @param string $input
-     *  @param string $output
-     *  @return object 
-     **/
-    public function setDirectory(string $input, string $output): object
-    {
-        $this->directoryInput  = $input;
-        $this->directoryOutput = $output;
-
-        return $this;
-    }
-
-
-
-    /**
-     *  
-     *  Dapatkan content files.
-     *  
-     *  @param string $path
-     *  @return string 
-     **/
-    protected function getFileContent(string $path): string
-    {
-        $pathFile = $this->directoryInput . $path . parent::DEFAULT_FILE_EXTENSION;
-
-        return parent::getFileContent($pathFile);
-    }
-
-
-
-    /**
-     *
-     *  Validasi folder input dan output jika 
-     *  folder output tidak ditemukan maka buat.
-     *
-     *  @throw \Exception jika folder input tidak ditemukan.
-     *  @throw \Exception jika folder output tidak ditemukan.
+     *  @param string $view 
      *  @return void 
      **/
-    private function validateDirectory(): void
+    public function compile(string $path): void
     {
-        if (!file_exists($this->directoryInput) || !is_writable($this->directoryInput)) {
-            throw new Exception("Direktori input tidak valid: {$this->directoryInput}");
-        } elseif (@$this->directoryOutput[-1] !== "/") {
-            throw new Exception("Direktori output tidak valid: {$this->directoryOutput}");
-        } elseif (!file_exists($this->directoryOutput)) {
-            mkdir($this->directoryOutput, 0777, true);
+
+        if ($this->validatePathInput()) {
+
+            $pathInput    = $this->getPathInput();
+            $fileContent  = $this->getFileContent($pathInput);
+            $finalContent = $this->toPhpValid($fileContent);
+            $finalContent = $this->compilerKurumiExtends($finalContent);
+
+            if (!file_exists(dirname($path))) {
+                mkdir(dirname($path), 0777, true);
+            }
+        
+            // saat pertamakali compile dijalankan,
+            // selanjutnya compile akan dijalankan jika
+            // terdapat perubahan difile input.
+            if (!file_exists($path)) {
+                file_put_contents($path, $finalContent); 
+            } elseif (isFileUpdate($pathInput, $path)) {
+                file_put_contents($path, $finalContent); 
+            }
         }
     }
 
 
+    
+    /**
+     *
+     *  Validasi path input.
+     *
+     *  @throw Exception jika folder input tidak ditemukan.
+     *  @return bool
+     **/
+    private function validatePathInput(): bool
+    {
+        if (!file_exists($this->pathInput) || !is_writable($this->pathInput)) {
+            throw new Exception("Direktori input tidak valid: {$this->pathInput}");
+        }
+
+        return true;
+    }
+
+
 
     /**
      * 
-     *  Compile directive menjadi php valid.
+     *  Replace directive dengan php valid.
      *
      *  @param string $content
      *  @return string
      **/
     private function toPhpValid(string $content): string
     {
-        foreach (
-        [
+        foreach ([
             $this->compilesEchos() => '/{{\s*(.*?)\s*}}/',
             $this->compilesEcho() => '/{!\s*(.*?)\s*!}/',
             $this->compilesForeach() => '/@kurumiforeach\s*\((.*?)\)(.*?)\s*@endkurumiforeach/s',
             $this->compilesKurumiPhp() => '/@kurumiphp\s*(.*?)\s*@endkurumiphp/s',
             $this->compilesKurumiSection() => '/@kurumiSection\s*\((.*?)\)(.*?)\s*@endkurumisection/s',
             $this->compilesKurumiSingleSection() =>'/@kurumiSection\s*\((.*)\)\s*/',
-            $this->compilesKurumiContent() => '/@kurumiContent\s*\((.*)\)\s*/',
+            $this->compilesZafkiel() => '/@zafkiel\s*\((.*)\)\s*/',
             $this->compilesKurumiInclude() => '/@kurumiInclude\s*\((.*)\)\s*/',
             $this->compilesKurumiImport() => '/@kurumiImport\s*\((.*)\)\s*/',
             $this->compilesOppai() => '/@oppai\s*\((.*)\)\s*/'
@@ -172,25 +138,28 @@ final class KurumiCompiler extends KurumiEngine implements KurumiCompilerInterfa
 
     /**
      *  
-     *  Compile directive kurumiExtends dipaling
+     *  Compile directive zafkiel dipaling
      *  bawah dari sebuah content files.
-     *
-     *  @return void 
+     *  
+     *  @param string $content
+     *  @return string
      **/
-    protected function compilerKurumiExtends(): void
+    protected function compilerKurumiExtends(string $content)
     {   
         $pattern = '/@kurumiExtends\s*\((.*)\)\s*/';
-        preg_match($pattern, $this->content, $matches);
+        preg_match($pattern, $content, $matches);
 
         if (isset($matches[1])) {
             $content = preg_replace(
                 pattern: $pattern,
-                replacement: $this->compilesKurumiExtends(@$matches[1]),
-                subject: $this->content
+                replacement: $this->compilesKurumiExtends($matches[1]),
+                subject: $content
             );
 
-            $this->content = $this->addFooters($content);
+            return $this->addFooters($content);                
         }
+
+        return $content;
     }
 
 
@@ -210,76 +179,28 @@ final class KurumiCompiler extends KurumiEngine implements KurumiCompilerInterfa
 
 
     /**
-     *
-     *  Set content file dan kembalikan 
-     *  object ini.
+     * 
+     *  Set path input.
      *
      *  @param string $path
-     *  @return KurumiDirectiveInterface 
+     *  @return void 
      **/
-    public function files(string $path): KurumiCompiler
+    public function setPathInput(string $path): void
     {
-        $this->content  = $this->getFileContent($path);
-        $this->pathView = $path;
-        return $this;
+        $this->pathInput = $path;
     }
 
 
 
     /**
      * 
-     *  Dapatkan path input lengkap.
+     *  Dapatkan path input.
      *
      *  @return string
      **/
     public function getPathInput(): string
-    {
-        $path = $this->directoryInput . $this->pathView . parent::DEFAULT_FILE_EXTENSION;
+    {   
+        $path = $this->pathInput;
         return $path;
-    }
-
-
-
-    /**
-     * 
-     *  Dapatkan path output lengkap.
-     *
-     *  @return string
-     **/
-    public function getPathOutput(): string
-    {
-        $path = $this->directoryOutput . pathToDot($this->pathView) . '.php';
-        return $path;
-    }
-
-
-
-    /**
-     * 
-     *  Render, Generate file baru dengan hasil
-     *  convert directive.
-     *
-     *  @param string $view 
-     *  @return void 
-     **/
-    public function compile(): void
-    {
-        $this->validateDirectory();
-
-        $this->compilerKurumiExtends();
-
-        $pathOutput   = $this->getPathOutput();
-        $pathInput    = $this->getPathInput();
-        $finalContent = $this->toPhpValid($this->content);
-
-        
-        // saat pertamakali compile dijalankan,
-        // selanjutnya compile akan dijalankan jika
-        // terdapat perubahan difile input.
-        if (!file_exists($pathOutput)) {
-            file_put_contents($pathOutput, $finalContent); 
-        } elseif (isFileUpdate($pathInput, $pathOutput)) {
-            file_put_contents($pathOutput, $finalContent); 
-        }
     }
 }

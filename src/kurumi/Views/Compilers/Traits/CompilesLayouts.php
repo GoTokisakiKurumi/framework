@@ -23,7 +23,7 @@ trait compilesLayouts {
      **/
     public function compilesKurumiExtends(string $expresion): string
     {
-        $echo = "<?php \$__temp->extendContent($expresion) ?>";
+        $echo = "<?php \$__temp->make($expresion) ?>";
         $this->footer[] = $echo;
 
         return '';
@@ -33,13 +33,13 @@ trait compilesLayouts {
 
     /**
      *  
-     *  compiles @kurumiContent menjadi php yang valid.
+     *  compiles @zafkiel menjadi php yang valid.
      * 
      *  @return string 
      **/
-    public function compilesKurumiContent(): string 
+    public function compilesZafkiel(): string 
     {
-        return '<?php echo $__temp->content($1) ?>';
+        return '<?php echo $__temp->zafkielContent($1) ?>';
     }
 
 
@@ -52,7 +52,7 @@ trait compilesLayouts {
      **/
     public function compilesKurumiSection(): string 
     {
-        return '<?php $__temp->startContent($1) ?>$2<?php $__temp->stopContent(); ?>';
+        return '<?php $__temp->startSection($1) ?>$2<?php $__temp->stopSection(); ?>';
     }
 
 
@@ -66,6 +66,6 @@ trait compilesLayouts {
      **/
     public function compilesKurumiSingleSection(): string
     {
-        return '<?php $__temp->startContent($1) ?>';
+        return '<?php $__temp->startSection($1) ?>';
     }
 }
