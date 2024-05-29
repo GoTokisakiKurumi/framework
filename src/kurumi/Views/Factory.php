@@ -3,6 +3,7 @@
 
 namespace Kurumi\Views;
 
+
 use Kurumi\Views\Compilers\CompilerInterface;
 
 
@@ -26,23 +27,13 @@ final class Factory {
     protected string $view;
 
 
-    /**
-     * 
-     *
-     *
-     **/
-    protected array $extension = [];
-
-
 
     /**
-     * 
-     *  @property-read Kurumi\Views\View $viewInstance
+     *  
+     *
      *  @property-read Kurumi\Views\Compilers\KurumiCompiler $compiler
      **/
-    public function __construct
-    (
-        protected readonly View $viewInstance,
+    public function __construct(
         protected readonly CompilerInterface $compiler
     ){}
 
@@ -64,7 +55,7 @@ final class Factory {
             "__view" => $view
         ], $data);
 
-        $this->viewInstance->render($this->getPathStorage(), $data);
+        return $this->viewInstance($this->getPathStorage(), $data);
     }
 
 
@@ -81,6 +72,21 @@ final class Factory {
         $compiler = $this->compiler;
         $compiler->setPathInput($this->getPathViews());
         $compiler->compile(path: $this->getPathStorage());
+    }
+
+
+
+    /**
+     *  
+     *  Instance object view. 
+     *  
+     *  @param string $view 
+     *  @param array $data
+     *  @return View 
+     **/
+    public function viewInstance(string $path, array $data = [])
+    {
+        return new View($path, $data);
     }
 
 

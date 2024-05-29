@@ -119,6 +119,6 @@ if (!function_exists('view'))
     function view(string $view, array $data = [])
     {
         $factory = app(Factory::class);
-        $factory->make($view, $data);
+        $factory->make($view, $data)->render();
     } 
 }

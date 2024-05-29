@@ -23,7 +23,7 @@ trait compilesLayouts {
      **/
     public function compilesKurumiExtends(string $expresion): string
     {
-        $echo = "<?php \$__temp->make($expresion) ?>";
+        $echo = "<?php \$__temp->make($expresion)->render() ?>";
         $this->footer[] = $echo;
 
         return '';

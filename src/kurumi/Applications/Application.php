@@ -4,7 +4,6 @@
 namespace Kurumi\Applications;
 
 
-use Kurumi\Views\View;
 use Kurumi\Consoles\Command;
 use Kurumi\Container\ContainerInterface;
 use Kurumi\FileSystems\FileSystem;
@@ -49,7 +48,6 @@ class Application {
     protected function registerClassBindings(): void
     {
         $this->container->bind(Factory::class);
-        $this->container->bind(View::class);
         $this->container->bind(KurumiTemplateInterface::class, KurumiTemplate::class);
         $this->container->bind(CompilerInterface::class, KurumiCompiler::class);
     }

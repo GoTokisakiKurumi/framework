@@ -17,6 +17,40 @@ use ErrorException;
 class View 
 {
 
+    
+    /**
+     *
+     *  Menyimpan path.
+     *
+     *  @property-read string $path
+     **/
+    protected readonly string $path;
+
+
+    /**
+     *
+     *  Menyimpan data.
+     *
+     *  @property-read array $data 
+     **/
+    protected readonly array $data;
+
+
+
+    /**
+     * 
+     *  Set path dan data
+     *
+     *  @param string $path
+     *  @param array $data 
+     **/
+    public function __construct(string $path, array $data = [])
+    {
+        $this->path = $path;
+        $this->data = $data;
+    }
+
+
 
     /**
      *
@@ -26,10 +60,10 @@ class View
      *  @param array  $data
      *  @return void 
      **/
-    public function render(string $path, array $data = [])
+    public function render(): void
     {
-        if ($this->validatePath($path)) {
-            app('filesystem')->require($path, $data);
+        if ($this->validatePath($this->getPath())) {
+            app('filesystem')->require($this->getPath(), $this->getData());
         }   
     }
 
@@ -50,5 +84,31 @@ class View
         }
 
         return true;
+    }
+
+
+
+    /**
+     * 
+     *  Dapatkan path.
+     *
+     *  @return string
+     **/
+    public function getPath(): string
+    {
+        return $this->path;
+    }
+
+
+
+    /**
+     * 
+     *  Dapatkan data.
+     *
+     *  @return array 
+     **/
+    public function getData(): array
+    {
+        return $this->data;
     }
 }
