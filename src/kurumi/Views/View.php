@@ -5,6 +5,7 @@ namespace Kurumi\Views;
 
 
 use ErrorException;
+use Kurumi\FileSystems\FileSystem;
 
 
 /**
@@ -16,6 +17,15 @@ use ErrorException;
  **/
 class View 
 {
+
+
+    /**
+     *
+     *  Menyimpan instance object FileSystem.
+     *
+     *  @property-read Kurumi\FileSystems\FileSystem $files
+     **/
+    protected readonly FileSystem $files;
 
     
     /**
@@ -38,16 +48,18 @@ class View
 
 
     /**
-     * 
-     *  Set path dan data
-     *
+     *  
+     *  Inisialisasi property.
+     *  
+     *  @param Kurumi\FileSystems\FileSystem $files
      *  @param string $path
      *  @param array $data 
      **/
-    public function __construct(string $path, array $data = [])
+    public function __construct(FileSystem $files, string $path, array $data = [])
     {
-        $this->path = $path;
-        $this->data = $data;
+        $this->path  = $path;
+        $this->data  = $data;
+        $this->files = $files;
     }
 
 
@@ -63,7 +75,10 @@ class View
     public function render(): void
     {
         if ($this->validatePath($this->getPath())) {
-            app('filesystem')->require($this->getPath(), $this->getData());
+            $this->files->require(
+                path: $this->getPath(),
+                data: $this->getData()
+            );
         }   
     }
 
@@ -79,7 +94,7 @@ class View
      **/
     private function validatePath(string $path): bool
     {
-        if (!file_exists($path)) {
+        if (!$this->files->exists($path)) {
             throw new ErrorException("($path) jalur file tidak ditermukan.");
         }
 

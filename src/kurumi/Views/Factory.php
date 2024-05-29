@@ -3,7 +3,7 @@
 
 namespace Kurumi\Views;
 
-
+use Kurumi\FileSystems\FileSystem;
 use Kurumi\Views\Compilers\CompilerInterface;
 use Kurumi\Views\Compilers\StyleCompiler;
 use Whoops\Exception\ErrorException;
@@ -34,11 +34,14 @@ final class Factory {
     /**
      *  
      *
-     *  @property-read Kurumi\Views\Compilers\KurumiCompiler $compiler
+     *  @property-read Kurumi\Views\Compilers\KurumiCompiler $kurumiCompiler
+     *  @property-read Kurumi\Views\Compilers\StyleCompiler  $styleCompiler
+     *  @property-read Kurumi\FileSystems\FileSystem         $files
      **/
     public function __construct(
-        protected readonly CompilerInterface $compiler,
-        protected readonly StyleCompiler $styleCompiler
+        protected readonly CompilerInterface $kurumiCompiler,
+        protected readonly StyleCompiler $styleCompiler,
+        protected readonly FileSystem $files
     ){}
 
 
@@ -77,7 +80,7 @@ final class Factory {
     {
         $path = dirname($this->getPathViews()) . '/' . $path;
 
-        if (!file_exists($path)) {
+        if (!$this->files->exists($path)) {
             throw new ErrorException("File tidak ditemukan: $path");
         }
 
@@ -95,7 +98,7 @@ final class Factory {
      **/
     protected function kurumiCompiler(): void
     {
-        $compiler = $this->compiler;
+        $compiler = $this->kurumiCompiler;
         $compiler->setPathInput($this->getPathViews());
         $compiler->compile(path: $this->getPathStorage());
     }
@@ -128,7 +131,7 @@ final class Factory {
      **/
     public function viewInstance(string $path, array $data = []): View
     {
-        return new View($path, $data);
+        return new View($this->files, $path, $data);
     }
 
 
