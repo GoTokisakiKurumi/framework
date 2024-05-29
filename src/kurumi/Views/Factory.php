@@ -26,6 +26,14 @@ final class Factory {
     protected string $view;
 
 
+    /**
+     * 
+     *
+     *
+     **/
+    protected array $extension = [];
+
+
 
     /**
      * 
