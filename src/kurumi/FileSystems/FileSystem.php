@@ -23,11 +23,63 @@ class FileSystem {
      *  @param string $path
      *  @return bool 
      **/
-    public function isFile(string $path): bool
+    public function exists(string $path): bool
     {
         return file_exists($path);
     }
 
+
+
+    /**
+     *
+     *  Membuat dan menulis file.
+     *  (akan menimpa isi contents sebelumnya)
+     *
+     *  @param string $path
+     *  @param mixed  $contents
+     *  @param int    $flags
+     *  @return void 
+     **/
+    public function put(string $path, mixed $contents = '', int $flags = 0): void
+    {
+        file_put_contents($path, $contents, $flags);
+    }
+
+
+
+    /**
+     *  
+     *  Dapatkan contents sebuah file.
+     *  
+     *  @param string $path 
+     *  @throws ErrorException jika directory tidak valid 
+     *  @return string|bool
+     **/
+    public function get(string $path): string|bool
+    {
+        if ($this->exists($path)) {
+            return file_get_contents($path);
+        }
+
+        throw new ErrorException("File tidak ditemukan ($path).");
+    }
+
+
+
+    /**
+     *  
+     *  Buat folder.
+     *
+     *  @param string $path
+     *  @param int    $permissions
+     *  @param bool   $recursive
+     *  @return void
+     **/
+    public function makeDir(string $path, int $permissions = 0777, bool $recursive = true): void
+    {
+        mkdir($path, $permissions, $recursive);
+    }
+    
 
 
     /**
@@ -41,7 +93,7 @@ class FileSystem {
      **/
     public function isFileUpdate(string $input, string $output)
     {
-        if ($this->isFile($input)) {
+        if ($this->exists($input)) {
             $fileTimeInput  = filemtime($input);
             $fileTimeOutput = @filemtime($output) ?? 0;
 
@@ -62,7 +114,7 @@ class FileSystem {
      **/
     public function require(string $path, array $data = [])
     {
-        if ($this->isFile($path)) { 
+        if ($this->exists($path)) { 
             $__path = $path;
             $__data = $data;
 
@@ -87,7 +139,7 @@ class FileSystem {
      **/
     public function requireOnce(string $path, array $data = [])
     {
-        if ($this->isFile($path)) { 
+        if ($this->exists($path)) { 
             $__path = $path;
             $__data = $data;
 

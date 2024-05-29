@@ -5,10 +5,13 @@ namespace Kurumi\Views;
 
 
 use Kurumi\Views\Compilers\CompilerInterface;
+use Kurumi\Views\Compilers\StyleCompiler;
+use Whoops\Exception\ErrorException;
 
 
 /**
- *
+ *  
+ *  Factory
  *
  *  @author Lutfi Aulia Sidik 
  **/
@@ -34,28 +37,51 @@ final class Factory {
      *  @property-read Kurumi\Views\Compilers\KurumiCompiler $compiler
      **/
     public function __construct(
-        protected readonly CompilerInterface $compiler
+        protected readonly CompilerInterface $compiler,
+        protected readonly StyleCompiler $styleCompiler
     ){}
 
 
 
     /**
      *
-     * 
-     *
+     *  @param string $view
+     *  @param string $data
+     *  @return Kurumi\Views\View
      **/
     public function make(string $view, array $data = [])
     {
         if ($view) $this->setView($view);
  
-        $this->compiler();
+        $this->kurumiCompiler();
 
-        $data = array_merge([
-            "__temp" => $this,
-            "__view" => $view
-        ], $data);
+        $data = array_merge(["__temp" => $this], $data);
 
         return $this->viewInstance($this->getPathStorage(), $data);
+    }
+
+
+
+    /**
+     *
+     *  Import file memungkinkan untuk memisahkan 
+     *  file (css, js) dan secara otomatis akan dicompile 
+     *  menjadi satu file.
+     *
+     *  @param string      $path
+     *  @param string|null $key 
+     *  @throws ErrorException jika file tidak ditemukan.
+     *  @return void 
+     **/
+    public function import(string $path, string $key = null): void
+    {
+        $path = dirname($this->getPathViews()) . '/' . $path;
+
+        if (!file_exists($path)) {
+            throw new ErrorException("File tidak ditemukan: $path");
+        }
+
+        $this->styleCompiler()->compile($path, $key);
     }
 
 
@@ -67,11 +93,27 @@ final class Factory {
      *  
      *  @return void 
      **/
-    protected function compiler(): void
+    protected function kurumiCompiler(): void
     {
         $compiler = $this->compiler;
         $compiler->setPathInput($this->getPathViews());
         $compiler->compile(path: $this->getPathStorage());
+    }
+
+
+
+    /**
+     * 
+     *  Gabungkan dari beberapa file menjadi satu 
+     *  file.
+     *
+     *  @return Kurumi\Views\Compilers\StyleCompiler
+     **/
+    protected function styleCompiler(): StyleCompiler
+    {
+        $compiler = $this->styleCompiler;
+        $compiler->setDirectoyOutput($this->getDirectoryPublic());
+        return $compiler;
     }
 
 
@@ -82,9 +124,9 @@ final class Factory {
      *  
      *  @param string $view 
      *  @param array $data
-     *  @return View 
+     *  @return Kurumi\Views\View 
      **/
-    public function viewInstance(string $path, array $data = [])
+    public function viewInstance(string $path, array $data = []): View
     {
         return new View($path, $data);
     }
@@ -103,6 +145,20 @@ final class Factory {
         $this->view = $view;
     }
 
+
+
+    /**
+     *
+     *  Dapatkan directory lengkap ke public.
+     *
+     *  @return string  
+     **/
+    protected function getDirectoryPublic(): string
+    {
+        $path = app()->get("path.public");
+        return $path;
+    }
+    
 
 
     /**

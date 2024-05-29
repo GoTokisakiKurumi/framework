@@ -11,6 +11,7 @@ use Kurumi\Views\KurumiTemplate;
 use Kurumi\Views\KurumiTemplateInterface;
 use Kurumi\Views\Compilers\KurumiCompiler;
 use Kurumi\Views\Compilers\CompilerInterface;
+use Kurumi\Views\Compilers\StyleCompiler;
 use Kurumi\Views\Factory;
 
 
@@ -50,6 +51,7 @@ class Application {
         $this->container->bind(Factory::class);
         $this->container->bind(KurumiTemplateInterface::class, KurumiTemplate::class);
         $this->container->bind(CompilerInterface::class, KurumiCompiler::class);
+        $this->container->bind(StyleCompiler::class);
     }
 
 

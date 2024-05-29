@@ -22,7 +22,7 @@ trait compilesIncludes {
      **/   
     public function compilesKurumiInclude(): string
     {
-        return '<?php $__temp->includeFile($1) ?>';
+        return '<?php $__temp->make($1)->render() ?>';
     }
 
 
@@ -35,7 +35,7 @@ trait compilesIncludes {
      **/   
     public function compilesKurumiImport(): string
     {
-        return '<?php $__temp->importFile($__view, $1) ?>';
+        return '<?php $__temp->import($1) ?>';
     }
 
 }
