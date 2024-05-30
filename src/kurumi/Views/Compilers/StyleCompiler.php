@@ -304,10 +304,13 @@ final class StyleCompiler extends Compiler implements CompilerInterface {
      **/
     protected function getMarkerKey(string $content): string
     {
-        $key = $this->getKey();
-        $marker = "/**[$key]**/\n\n{$content}\n/**[end$key]**/\n\n";
-
-        return $marker;
+        $key       = $this->getKey();
+        $marker    = "/**[$key]**/\n\n{$content}\n/**[end$key]**/";
+        $extension = $this->getExtension();
+        
+        return ($extension === "js") 
+                ? "{" . $marker . "}\n\n"
+                : $marker;
     }
 
 
