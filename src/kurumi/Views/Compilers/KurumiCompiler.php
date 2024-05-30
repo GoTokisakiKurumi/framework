@@ -3,8 +3,6 @@
 namespace Kurumi\Views\Compilers;
 
 
-use Kurumi\FileSystems\FileSystem;
-use Kurumi\Views\Engines\KurumiEngine;
 use Whoops\Exception\ErrorException;
 
 
@@ -15,7 +13,7 @@ use Whoops\Exception\ErrorException;
  *
  *  @author Lutfi Aulia Sidik
  **/
-final class KurumiCompiler extends KurumiEngine implements CompilerInterface
+final class KurumiCompiler extends Compiler implements CompilerInterface
 {
 
     use Traits\CompilesLayouts,
@@ -24,15 +22,6 @@ final class KurumiCompiler extends KurumiEngine implements CompilerInterface
         Traits\CompilesLoops,
         Traits\CompilesFunctions,
         Traits\CompilesEchos;
-
-
-    /**
-     * 
-     *  Menyimpan directory output.
-     *
-     *  @property string $directoryInput
-     **/
-    private string $directoryOutput = "";
 
 
     /**
@@ -52,18 +41,6 @@ final class KurumiCompiler extends KurumiEngine implements CompilerInterface
      *  @property array $extension
      **/   
     private array $extension = ["kurumi" => ".kurumi.php"];
-
-
-
-    /**
-     *  
-     *  Inisialisasi property. 
-     *
-     *  @property-read Kurumi\FileSystems\FileSystem $files
-     **/
-    public function __construct(
-        protected readonly FileSystem $files
-    ){}
 
 
 
@@ -188,20 +165,6 @@ final class KurumiCompiler extends KurumiEngine implements CompilerInterface
     {
         $this->directoryOutput = $directory;
         return $this;
-    }
-
-
-
-    /**
-     * 
-     *  Dapatkan directory output
-     *
-     *  @return string
-     **/
-    public function getDirectoryOutput(): string
-    {   
-        $path = $this->directoryOutput;
-        return $path;
     }
 
 

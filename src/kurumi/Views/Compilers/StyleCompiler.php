@@ -4,9 +4,6 @@
 namespace Kurumi\Views\Compilers;
 
 
-use Exception;
-use Kurumi\FileSystems\FileSystem;
-use Kurumi\Views\Engines\KurumiEngine;
 use Whoops\Exception\ErrorException;
 
 
@@ -17,18 +14,8 @@ use Whoops\Exception\ErrorException;
  *
  *  @author Lutfi Aulia Sidik
  **/
-class StyleCompiler extends KurumiEngine implements CompilerInterface {
-   
-
-    /**
-     *  
-     *  Menyimpan directory output, tempat
-     *  untuk menyimpan hasil compile.
-     *  
-     *  @property string $directoryOutput
-     **/
-    protected string $directoryOutput = "";
-
+final class StyleCompiler extends Compiler implements CompilerInterface {
+ 
 
     /**
      *  
@@ -76,16 +63,6 @@ class StyleCompiler extends KurumiEngine implements CompilerInterface {
      *  @property array $extension
      **/
     protected array $extension = ["css", "js"];
-    
-
-
-    /**
-     * 
-     *  @property-read Kurumi\FileSystems\FileSystem $files 
-     **/
-    public function __construct(
-        protected readonly FileSystem $files
-    ){}
 
 
 
@@ -102,7 +79,7 @@ class StyleCompiler extends KurumiEngine implements CompilerInterface {
     {
         if ($this->files->exists($path)) {
             $this->setPathInput($path);
-            $this->setPathOutput($this->createFolderOutput());
+            $this->setPathOutput($this->createDirectoryOutput());
             
             $pathOutput = $this->getPathOutput();
             if(!$this->files->exists($pathOutput)) {
@@ -176,7 +153,7 @@ class StyleCompiler extends KurumiEngine implements CompilerInterface {
      *
      *  @return string 
      **/
-    protected function createFolderOutput(): string
+    protected function createDirectoryOutput(): string
     {
         $path = $this->getDirectoryOutput() . "/" .  $this->getExtension();
         if (!$this->files->exists($path)) {
@@ -306,20 +283,6 @@ class StyleCompiler extends KurumiEngine implements CompilerInterface {
 
     /**
      * 
-     *  Dapatkan directory output tempat memyimpan 
-     *  file hasil compile.
-     *  
-     *  @return string
-     **/
-    public function getDirectoryOutput(): string
-    {
-        return $this->directoryOutput;
-    }
-
-
-
-    /**
-     * 
      *  Dapatkan key.
      *
      *  @return 
@@ -382,6 +345,6 @@ class StyleCompiler extends KurumiEngine implements CompilerInterface {
             return $this->extension[$exteIndex];
         }
         
-        throw new Exception("Extension [$extension] tidak didukung.");
+        throw new ErrorException("Extension [$extension] tidak didukung.");
     }
 }
