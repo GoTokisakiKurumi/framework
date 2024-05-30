@@ -20,7 +20,7 @@ interface CompilerInterface {
      *  @param string $path 
      *  @return void
      **/ 
-    public function compile(string $path): void;
+    public function compile(string $path, string $optional): void;
 
 
     /**
@@ -30,6 +30,6 @@ interface CompilerInterface {
      *  @param string $path
      *  @return void|mixed 
      **/
-    public function setPathInput(string $path);
+    public function setDirectoryOutput(string $path);
 
 }

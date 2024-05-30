@@ -60,17 +60,17 @@ final class Factory {
         }
 
         $pathViews   = $this->getPathViews();
-        $pathStorage = $this->getPathStorage();
+        $pathStorage = $this->getPathPublicStorage();
         
         if ($this->files->exists($pathViews)) {
             
             $this->kurumiCompiler
-                ->setPathInput($pathViews)
-                ->compile($pathStorage);
+                ->setDirectoryOutput($this->getDirectoryPublicStorage())
+                ->compile($pathViews, $view);
 
             $data = array_merge(["__temp" => $this], $data);
 
-            return $this->viewInstance($this->getPathStorage(), $data);
+            return $this->viewInstance($pathStorage, $data);
         }
 
         throw new ErrorException("($view) tidak ditemukan.");
@@ -158,7 +158,24 @@ final class Factory {
         $path = app()->get("path.public");
         return $path;
     }
-    
+ 
+
+
+    /**
+     *
+     *  Dapatkan directory lengkap ke
+     *  storage/app/public.
+     *
+     *  @return string  
+     **/
+    protected function getDirectoryPublicStorage(): string
+    {
+        $path = app()->get("path.storage") 
+                . "/app/public";
+
+        return $path;
+    }
+   
 
 
     /**
@@ -171,9 +188,7 @@ final class Factory {
     protected function getPathViews(): string
     {
         $path = app()->get("path.resources") 
-            . "/views/" 
-            . $this->view
-            . ".kurumi.php";
+              . "/views/" . $this->view . ".kurumi.php";
 
         return $path;
     }
@@ -187,7 +202,7 @@ final class Factory {
      *
      *  @return string 
      **/
-    protected function getPathStorage(): string 
+    protected function getPathPublicStorage(): string 
     {
         $path = app()->get("path.storage") 
             . "/app/public/" 

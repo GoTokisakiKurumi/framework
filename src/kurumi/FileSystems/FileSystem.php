@@ -73,11 +73,11 @@ class FileSystem {
      *  @param string $path
      *  @param int    $permissions
      *  @param bool   $recursive
-     *  @return void
+     *  @return bool
      **/
-    public function makeDir(string $path, int $permissions = 0777, bool $recursive = true): void
+    public function makeDir(string $path, int $permissions = 0777, bool $recursive = true): bool
     {
-        mkdir($path, $permissions, $recursive);
+        return mkdir($path, $permissions, $recursive);
     }
     
 

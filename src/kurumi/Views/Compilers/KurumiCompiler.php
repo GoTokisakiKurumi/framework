@@ -3,8 +3,9 @@
 namespace Kurumi\Views\Compilers;
 
 
-use Exception;
+use Kurumi\FileSystems\FileSystem;
 use Kurumi\Views\Engines\KurumiEngine;
+use Whoops\Exception\ErrorException;
 
 
 /**
@@ -27,11 +28,11 @@ final class KurumiCompiler extends KurumiEngine implements CompilerInterface
 
     /**
      * 
-     *  Menyimpan directory input.
+     *  Menyimpan directory output.
      *
      *  @property string $directoryInput
      **/
-    private string $pathInput = "";
+    private string $directoryOutput = "";
 
 
     /**
@@ -43,65 +44,62 @@ final class KurumiCompiler extends KurumiEngine implements CompilerInterface
      **/
     private array $footer = [];
 
+    
+    /**
+     * 
+     *  Extension file yang didukung.
+     *
+     *  @property array $extension
+     **/   
+    private array $extension = ["kurumi" => ".kurumi.php"];
+
 
 
     /**
      *  
+     *  Inisialisasi property. 
      *
+     *  @property-read Kurumi\FileSystems\FileSystem $files
      **/
-    public function __construct(){}
+    public function __construct(
+        protected readonly FileSystem $files
+    ){}
 
 
 
     /**
      * 
-     *  Compile kurumi template.
+     *  Compile directive kurumi menjadi php
+     *  yang valid.
      *
-     *  @param string $view 
+     *  @param string $path
+     *  @param string $filename
+     *  @throws Whoops\Exception\ErrorException jika file tidak ditemukan
      *  @return void 
      **/
-    public function compile(string $path): void
+    public function compile(string $path, string $filename): void
     {
+        if ($this->files->exists($path)) {
+            if (str_ends_with($path, $this->extension["kurumi"])) {
+                $finalContent = $this->toPhpValid($this->getFileContent($path));
+                $finalContent = $this->compilerKurumiExtends($finalContent);
+            
+                $this->createDirectoryOutput();
 
-        if ($this->validatePathInput()) {
-
-            $pathInput    = $this->getPathInput();
-            $fileContent  = $this->getFileContent($pathInput);
-            $finalContent = $this->toPhpValid($fileContent);
-            $finalContent = $this->compilerKurumiExtends($finalContent);
-
-            if (!file_exists(dirname($path))) {
-                mkdir(dirname($path), 0777, true);
+                $pathOutput = $this->createPathOutput($filename);
+                if (!$this->files->exists($pathOutput)) {
+                    $this->files->put($pathOutput, $finalContent);
+                } elseif (isFileUpdate($path, $pathOutput)) {
+                    $this->files->put($pathOutput, $finalContent); 
+                }
+            } else {
+                throw new ErrorException("Extension selain [kurumi.php] tidak didukung.");
             }
-        
-            // saat pertamakali compile dijalankan,
-            // selanjutnya compile akan dijalankan jika
-            // terdapat perubahan difile input.
-            if (!file_exists($path)) {
-                file_put_contents($path, $finalContent); 
-            } elseif (isFileUpdate($pathInput, $path)) {
-                file_put_contents($path, $finalContent); 
-            }
+        } else {
+            throw new ErrorException("($path) File tidak ditemukan.");
         }
     }
 
-
-    
-    /**
-     *
-     *  Validasi path input.
-     *
-     *  @throw Exception jika folder input tidak ditemukan.
-     *  @return bool
-     **/
-    private function validatePathInput(): bool
-    {
-        if (!file_exists($this->pathInput) || !is_writable($this->pathInput)) {
-            throw new Exception("Direktori input tidak valid: {$this->pathInput}");
-        }
-
-        return true;
-    }
 
 
 
@@ -180,14 +178,15 @@ final class KurumiCompiler extends KurumiEngine implements CompilerInterface
 
     /**
      * 
-     *  Set path input.
+     *  Set directory output untuk tempat
+     *  menyimpan file hasil compile.
      *
      *  @param string $path
-     *  @return void 
+     *  @return Kurumi\Views\Compilers\CompilerInterface 
      **/
-    public function setPathInput(string $path)
+    public function setDirectoryOutput(string $path): CompilerInterface
     {
-        $this->pathInput = $path;
+        $this->directoryOutput = $path;
         return $this;
     }
 
@@ -195,13 +194,50 @@ final class KurumiCompiler extends KurumiEngine implements CompilerInterface
 
     /**
      * 
-     *  Dapatkan path input.
+     *  Dapatkan directory output
      *
      *  @return string
      **/
-    public function getPathInput(): string
+    public function getDirectoryOutput(): string
     {   
-        $path = $this->pathInput;
+        $path = $this->directoryOutput;
+        return $path;
+    }
+
+
+
+    /**
+     * 
+     *  Membuat directory output jika directory output
+     *  tidak ditemukan.
+     *
+     *  @return bool 
+     **/
+    protected function createDirectoryOutput(): bool
+    {
+        $outputDir = $this->getDirectoryOutput();
+        if ($this->files->exists($outputDir)) {
+            return false;
+        }
+
+        return $this->files->makeDir($outputDir);
+    }
+
+
+
+    /**
+     *   
+     *  Membuat path output untuk menyimpan
+     *  file hasil compile.
+     *
+     *  @param string $filename
+     *  @return string 
+     **/
+    protected function createPathOutput(string $filename): string
+    {
+        $filename = str_replace('/', '.', $filename);
+        $path = $this->getDirectoryOutput() . "/" . $filename . ".php";
+
         return $path;
     }
 }
