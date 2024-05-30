@@ -28,8 +28,8 @@ interface CompilerInterface {
      *  Set path input.
      *
      *  @param string $path
-     *  @return void 
+     *  @return void|mixed 
      **/
-    public function setPathInput(string $path): void;
+    public function setPathInput(string $path);
 
 }

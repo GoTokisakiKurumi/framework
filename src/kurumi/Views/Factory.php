@@ -33,6 +33,7 @@ final class Factory {
 
     /**
      *  
+     *  Inisialisasi property.
      *
      *  @property-read Kurumi\Views\Compilers\KurumiCompiler $kurumiCompiler
      *  @property-read Kurumi\Views\Compilers\StyleCompiler  $styleCompiler
@@ -54,13 +55,25 @@ final class Factory {
      **/
     public function make(string $view, array $data = [])
     {
-        if ($view) $this->setView($view);
- 
-        $this->kurumiCompiler();
+        if ($view) {
+            $this->setView($view);
+        }
 
-        $data = array_merge(["__temp" => $this], $data);
+        $pathViews   = $this->getPathViews();
+        $pathStorage = $this->getPathStorage();
+        
+        if ($this->files->exists($pathViews)) {
+            
+            $this->kurumiCompiler
+                ->setPathInput($pathViews)
+                ->compile($pathStorage);
 
-        return $this->viewInstance($this->getPathStorage(), $data);
+            $data = array_merge(["__temp" => $this], $data);
+
+            return $this->viewInstance($this->getPathStorage(), $data);
+        }
+
+        throw new ErrorException("($view) tidak ditemukan.");
     }
 
 
@@ -85,22 +98,6 @@ final class Factory {
         }
 
         $this->styleCompiler()->compile($path, $key);
-    }
-
-
-
-    /**
-     *
-     *  Terjemahkan directive menjadi php 
-     *  yang valid.
-     *  
-     *  @return void 
-     **/
-    protected function kurumiCompiler(): void
-    {
-        $compiler = $this->kurumiCompiler;
-        $compiler->setPathInput($this->getPathViews());
-        $compiler->compile(path: $this->getPathStorage());
     }
 
 

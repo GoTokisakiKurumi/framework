@@ -185,9 +185,10 @@ final class KurumiCompiler extends KurumiEngine implements CompilerInterface
      *  @param string $path
      *  @return void 
      **/
-    public function setPathInput(string $path): void
+    public function setPathInput(string $path)
     {
         $this->pathInput = $path;
+        return $this;
     }
 
 
