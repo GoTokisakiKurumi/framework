@@ -173,9 +173,9 @@ final class StyleCompiler extends Compiler implements CompilerInterface {
      **/
     protected function createKey(): string
     {
-        $dir = dirname($this->getPathInput());
-        $key = join('.', array_slice(explode('/', $dir), 1, 15));
-
+        $dir = $this->getPathInput();
+        $key = join('-', array_slice(explode('/', $dir), 1, 15));
+        
         return $key;
     }
 
