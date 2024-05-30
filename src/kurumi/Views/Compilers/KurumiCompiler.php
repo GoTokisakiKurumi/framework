@@ -181,12 +181,12 @@ final class KurumiCompiler extends KurumiEngine implements CompilerInterface
      *  Set directory output untuk tempat
      *  menyimpan file hasil compile.
      *
-     *  @param string $path
+     *  @param string $directory
      *  @return Kurumi\Views\Compilers\CompilerInterface 
      **/
-    public function setDirectoryOutput(string $path): CompilerInterface
+    public function setDirectoryOutput(string $directory): CompilerInterface
     {
-        $this->directoryOutput = $path;
+        $this->directoryOutput = $directory;
         return $this;
     }
 

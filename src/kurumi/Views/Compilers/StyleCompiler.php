@@ -17,7 +17,7 @@ use Whoops\Exception\ErrorException;
  *
  *  @author Lutfi Aulia Sidik
  **/
-class StyleCompiler extends KurumiEngine {
+class StyleCompiler extends KurumiEngine implements CompilerInterface {
    
 
     /**
@@ -226,7 +226,7 @@ class StyleCompiler extends KurumiEngine {
      *  @param string $directory
      *  @return void 
      **/
-    public function setDirectoyOutput(string $directory): void
+    public function setDirectoryOutput(string $directory) 
     {
         $this->directoryOutput = $directory;
     }

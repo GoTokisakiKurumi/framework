@@ -112,7 +112,7 @@ final class Factory {
     protected function styleCompiler(): StyleCompiler
     {
         $compiler = $this->styleCompiler;
-        $compiler->setDirectoyOutput($this->getDirectoryPublic());
+        $compiler->setDirectoryOutput($this->getDirectoryPublic());
         return $compiler;
     }
 

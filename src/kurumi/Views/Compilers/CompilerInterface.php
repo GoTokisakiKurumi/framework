@@ -29,9 +29,9 @@ interface CompilerInterface {
      *  Set directory output untuk menyimpan
      *  hasil compile.
      *
-     *  @param string $path
+     *  @param string $directory
      *  @return void|mixed 
      **/
-    public function setDirectoryOutput(string $path);
+    public function setDirectoryOutput(string $directory);
 
 }
